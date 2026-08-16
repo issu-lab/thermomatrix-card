@@ -465,8 +465,8 @@ export const thermoMatrixStyles = css`
     padding: 7px 4px 0;
     border-top: 1px solid color-mix(in srgb, currentColor 28%, transparent);
     box-sizing: border-box;
-    overflow: hidden;
-    contain: layout paint;
+    overflow: visible;
+    contain: layout;
   }
 
   .lcd-consumption-icon {
@@ -496,8 +496,8 @@ export const thermoMatrixStyles = css`
   }
 
   .lcd-consumption-label .matrix-word {
-    --matrix-pixel-size: 1.05px;
-    --matrix-pixel-gap: 0.38px;
+    --matrix-pixel-size: 1.2px;
+    --matrix-pixel-gap: 0.42px;
   }
 
   .preset-icon {
@@ -566,7 +566,7 @@ export const thermoMatrixStyles = css`
       box-shadow 0.4s ease;
   }
 
-  .lcd-consumption.warning .power-led {
+  .lcd-consumption.power-warning .power-led {
     animation: power-led-warning 2.4s ease-in-out infinite;
   }
 
@@ -628,7 +628,7 @@ export const thermoMatrixStyles = css`
     .wheel-strip,
     .external-status-slide,
     .status-box.active.blink .matrix-word,
-    .lcd-consumption.warning .power-led {
+    .lcd-consumption.power-warning .power-led {
       animation: none;
     }
   }

@@ -13,7 +13,7 @@ import type {
   ThermoMatrixConfig,
 } from "./types";
 
-const VERSION = "0.5.3";
+const VERSION = "0.5.4";
 const WORKING_ACTIONS = new Set(["heating", "cooling", "drying", "fan"]);
 const WHEEL_CHARACTERS = ["-", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
@@ -633,7 +633,7 @@ export class ThermoMatrixCard extends LitElement {
 
     return html`
       <div
-        class="lcd-consumption ${warning ? "warning" : ""}"
+        class="lcd-consumption ${warning ? "power-warning" : ""}"
         style=${`--power-led-color:${ledColor}`}
       >
         <span class="lcd-consumption-icon" aria-hidden="true">⚡</span>

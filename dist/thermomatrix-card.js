@@ -992,8 +992,8 @@ const se = Ue(class extends Re {
     padding: 7px 4px 0;
     border-top: 1px solid color-mix(in srgb, currentColor 28%, transparent);
     box-sizing: border-box;
-    overflow: hidden;
-    contain: layout paint;
+    overflow: visible;
+    contain: layout;
   }
 
   .lcd-consumption-icon {
@@ -1023,8 +1023,8 @@ const se = Ue(class extends Re {
   }
 
   .lcd-consumption-label .matrix-word {
-    --matrix-pixel-size: 1.05px;
-    --matrix-pixel-gap: 0.38px;
+    --matrix-pixel-size: 1.2px;
+    --matrix-pixel-gap: 0.42px;
   }
 
   .preset-icon {
@@ -1093,7 +1093,7 @@ const se = Ue(class extends Re {
       box-shadow 0.4s ease;
   }
 
-  .lcd-consumption.warning .power-led {
+  .lcd-consumption.power-warning .power-led {
     animation: power-led-warning 2.4s ease-in-out infinite;
   }
 
@@ -1155,11 +1155,11 @@ const se = Ue(class extends Re {
     .wheel-strip,
     .external-status-slide,
     .status-box.active.blink .matrix-word,
-    .lcd-consumption.warning .power-led {
+    .lcd-consumption.power-warning .power-led {
       animation: none;
     }
   }
-`, Ie = "0.5.3", De = /* @__PURE__ */ new Set(["heating", "cooling", "drying", "fan"]), ie = ["-", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"], oe = {
+`, Ie = "0.5.4", De = /* @__PURE__ */ new Set(["heating", "cooling", "drying", "fan"]), ie = ["-", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"], oe = {
   off: { icon: "mdi:power", color: "#94a3b8" },
   heat: { icon: "mdi:fire", color: "#f97316" },
   cool: { icon: "mdi:snowflake", color: "#1d4ed8" },
@@ -1610,7 +1610,7 @@ const se = Ue(class extends Re {
     const e = this.hass.states[this._config.power_entity], t = Number(e?.state), s = String(e?.attributes.unit_of_measurement ?? ""), i = Number.isFinite(t) ? t : 0, r = Math.min(1, Math.max(0, (i - 20) / 1480)), n = Math.round(120 * (1 - r)), c = this.hass.themes?.darkMode === !0, a = i <= 20 ? c ? "#6b7280" : "#9ca3af" : `hsl(${n} 82% ${c ? "58%" : "40%"})`, h = Number.isFinite(t) && t >= 1500;
     return l`
       <div
-        class="lcd-consumption ${h ? "warning" : ""}"
+        class="lcd-consumption ${h ? "power-warning" : ""}"
         style=${`--power-led-color:${a}`}
       >
         <span class="lcd-consumption-icon" aria-hidden="true">⚡</span>
