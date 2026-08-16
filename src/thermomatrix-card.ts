@@ -13,7 +13,7 @@ import type {
   ThermoMatrixConfig,
 } from "./types";
 
-const VERSION = "0.5.0";
+const VERSION = "0.5.1";
 const WORKING_ACTIONS = new Set(["heating", "cooling", "drying", "fan"]);
 const WHEEL_CHARACTERS = ["-", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 

@@ -453,10 +453,10 @@ export const thermoMatrixStyles = css`
 
   .lcd-consumption {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    grid-template-columns: 18px minmax(0, 1fr) 78px 22px;
     gap: 8px;
     align-items: center;
-    min-height: 34px;
+    height: 34px;
     margin-top: 9px;
     padding: 7px 4px 0;
     border-top: 1px solid color-mix(in srgb, currentColor 28%, transparent);
@@ -469,10 +469,17 @@ export const thermoMatrixStyles = css`
 
   .lcd-consumption-label {
     display: flex;
+    min-width: 0;
     height: 100%;
     align-items: center;
     justify-content: center;
+    overflow: hidden;
     opacity: 0.68;
+  }
+
+  .lcd-consumption-label .matrix-word {
+    --matrix-pixel-size: 1.1px;
+    --matrix-pixel-gap: 0.4px;
   }
 
   .preset-icon {
@@ -484,10 +491,24 @@ export const thermoMatrixStyles = css`
 
   .lcd-consumption-value {
     display: inline-flex;
+    width: 78px;
     align-items: flex-end;
+    justify-content: flex-end;
     gap: 4px;
     font-size: 22px;
     line-height: 1;
+    color: #111827;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+
+  .lcd-panel.dark .lcd-consumption-value {
+    color: #f8fafc;
+  }
+
+  .lcd-consumption-value .lcd-number {
+    flex: 0 0 auto;
+    font-size: 22px;
   }
 
   .lcd-consumption-unit {

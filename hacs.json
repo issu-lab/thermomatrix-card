@@ -1,4 +1,5 @@
 {
   "name": "ThermoMatrix Card",
-  "filename": "thermomatrix-card.js"
+  "filename": "thermomatrix-card.js",
+  "render_readme": true
 }
