@@ -96,6 +96,7 @@ export const thermoMatrixStyles = css`
 
   .lcd-panel {
     width: 100%;
+    overflow: hidden;
     padding: 14px;
     border: 2px solid color-mix(in srgb, currentColor 34%, transparent);
     border-radius: 14px;
@@ -452,34 +453,50 @@ export const thermoMatrixStyles = css`
   }
 
   .lcd-consumption {
+    position: relative;
     display: grid;
-    grid-template-columns: 18px minmax(0, 1fr) 78px 22px;
+    grid-template-columns: 18px minmax(0, 1fr) 66px;
     gap: 8px;
     align-items: center;
+    width: 100%;
+    min-width: 0;
     height: 34px;
     margin-top: 9px;
     padding: 7px 4px 0;
     border-top: 1px solid color-mix(in srgb, currentColor 28%, transparent);
     box-sizing: border-box;
+    overflow: hidden;
+    contain: layout paint;
   }
 
   .lcd-consumption-icon {
     font-size: 14px;
   }
 
+  .lcd-consumption-center {
+    position: absolute;
+    left: 50%;
+    display: inline-flex;
+    align-items: center;
+    color: #111827;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  .lcd-panel.dark .lcd-consumption-center {
+    color: #f8fafc;
+  }
+
   .lcd-consumption-label {
     display: flex;
-    min-width: 0;
-    height: 100%;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
     opacity: 0.68;
   }
 
   .lcd-consumption-label .matrix-word {
-    --matrix-pixel-size: 1.1px;
-    --matrix-pixel-gap: 0.4px;
+    --matrix-pixel-size: 0.9px;
+    --matrix-pixel-gap: 0.34px;
   }
 
   .preset-icon {
@@ -491,15 +508,20 @@ export const thermoMatrixStyles = css`
 
   .lcd-consumption-value {
     display: inline-flex;
-    width: 78px;
+    grid-column: 3;
+    width: 66px;
+    min-width: 66px;
+    max-width: 66px;
+    height: 17px;
     align-items: flex-end;
     justify-content: flex-end;
-    gap: 4px;
-    font-size: 22px;
+    gap: 3px;
+    font-size: 17px;
     line-height: 1;
     color: #111827;
     white-space: nowrap;
     overflow: hidden;
+    contain: size layout paint;
   }
 
   .lcd-panel.dark .lcd-consumption-value {
@@ -508,16 +530,20 @@ export const thermoMatrixStyles = css`
 
   .lcd-consumption-value .lcd-number {
     flex: 0 0 auto;
-    font-size: 22px;
+    height: 17px;
+    font-size: 17px;
   }
 
   .lcd-consumption-unit {
-    padding-bottom: 1px;
-    font: 800 10px/1 Arial, sans-serif;
+    padding-bottom: 0;
+    font: 800 9px/1 Arial, sans-serif;
     letter-spacing: 0.06em;
   }
 
   .power-led {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 6px);
     width: 1.05em;
     height: 1.05em;
     border: 1px solid color-mix(in srgb, var(--power-led-color) 70%, #111827);
@@ -531,7 +557,9 @@ export const thermoMatrixStyles = css`
     );
     box-shadow: 0 0 6px color-mix(in srgb, var(--power-led-color) 58%, transparent),
       inset 0 -1px 2px rgba(0, 0, 0, 0.32);
-    font-size: 22px;
+    flex: 0 0 auto;
+    font-size: 17px;
+    transform: translateY(-50%);
     transition: background 0.4s ease, border-color 0.4s ease,
       box-shadow 0.4s ease;
   }

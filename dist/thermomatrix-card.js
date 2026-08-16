@@ -35,7 +35,7 @@ const he = (o) => new re(typeof o == "string" ? o : o + "", void 0, F), pe = (o,
   for (const s of e.cssRules) t += s.cssText;
   return he(t);
 })(o) : o;
-const { is: me, defineProperty: be, getOwnPropertyDescriptor: ge, getOwnPropertyNames: fe, getOwnPropertySymbols: _e, getPrototypeOf: xe } = Object, R = globalThis, G = R.trustedTypes, $e = G ? G.emptyScript : "", ye = R.reactiveElementPolyfillSupport, A = (o, e) => o, L = { toAttribute(o, e) {
+const { is: me, defineProperty: be, getOwnPropertyDescriptor: ge, getOwnPropertyNames: fe, getOwnPropertySymbols: _e, getPrototypeOf: xe } = Object, R = globalThis, Y = R.trustedTypes, $e = Y ? Y.emptyScript : "", ye = R.reactiveElementPolyfillSupport, A = (o, e) => o, L = { toAttribute(o, e) {
   switch (e) {
     case Boolean:
       o = o ? $e : null;
@@ -63,7 +63,7 @@ const { is: me, defineProperty: be, getOwnPropertyDescriptor: ge, getOwnProperty
       }
   }
   return t;
-} }, ne = (o, e) => !me(o, e), K = { attribute: !0, type: String, converter: L, reflect: !1, useDefault: !1, hasChanged: ne };
+} }, ne = (o, e) => !me(o, e), G = { attribute: !0, type: String, converter: L, reflect: !1, useDefault: !1, hasChanged: ne };
 Symbol.metadata ??= /* @__PURE__ */ Symbol("metadata"), R.litPropertyMetadata ??= /* @__PURE__ */ new WeakMap();
 let $ = class extends HTMLElement {
   static addInitializer(e) {
@@ -72,7 +72,7 @@ let $ = class extends HTMLElement {
   static get observedAttributes() {
     return this.finalize(), this._$Eh && [...this._$Eh.keys()];
   }
-  static createProperty(e, t = K) {
+  static createProperty(e, t = G) {
     if (t.state && (t.attribute = !1), this._$Ei(), this.prototype.hasOwnProperty(e) && ((t = Object.create(t)).wrapped = !0), this.elementProperties.set(e, t), !t.noAccessor) {
       const s = /* @__PURE__ */ Symbol(), i = this.getPropertyDescriptor(e, s, t);
       i !== void 0 && be(this.prototype, e, i);
@@ -90,7 +90,7 @@ let $ = class extends HTMLElement {
     }, configurable: !0, enumerable: !0 };
   }
   static getPropertyOptions(e) {
-    return this.elementProperties.get(e) ?? K;
+    return this.elementProperties.get(e) ?? G;
   }
   static _$Ei() {
     if (this.hasOwnProperty(A("elementProperties"))) return;
@@ -247,8 +247,8 @@ let $ = class extends HTMLElement {
   }
 };
 $.elementStyles = [], $.shadowRootOptions = { mode: "open" }, $[A("elementProperties")] = /* @__PURE__ */ new Map(), $[A("finalized")] = /* @__PURE__ */ new Map(), ye?.({ ReactiveElement: $ }), (R.reactiveElementVersions ??= []).push("2.1.2");
-const W = globalThis, Y = (o) => o, T = W.trustedTypes, Z = T ? T.createPolicy("lit-html", { createHTML: (o) => o }) : void 0, ae = "$lit$", g = `lit$${Math.random().toFixed(9).slice(2)}$`, le = "?" + g, ve = `<${le}>`, x = document, S = () => x.createComment(""), C = (o) => o === null || typeof o != "object" && typeof o != "function", j = Array.isArray, we = (o) => j(o) || typeof o?.[Symbol.iterator] == "function", H = `[ 	
-\f\r]`, w = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, J = /-->/g, X = />/g, f = RegExp(`>|${H}(?:([^\\s"'>=/]+)(${H}*=${H}*(?:[^ 	
+const W = globalThis, K = (o) => o, T = W.trustedTypes, Z = T ? T.createPolicy("lit-html", { createHTML: (o) => o }) : void 0, ae = "$lit$", g = `lit$${Math.random().toFixed(9).slice(2)}$`, le = "?" + g, ve = `<${le}>`, x = document, S = () => x.createComment(""), C = (o) => o === null || typeof o != "object" && typeof o != "function", j = Array.isArray, we = (o) => j(o) || typeof o?.[Symbol.iterator] == "function", H = `[ 	
+\f\r]`, w = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, X = /-->/g, J = />/g, f = RegExp(`>|${H}(?:([^\\s"'>=/]+)(${H}*=${H}*(?:[^ 	
 \f\r"'\`<>=]|("|')|))|$)`, "g"), Q = /'/g, ee = /"/g, ce = /^(?:script|style|textarea|title)$/i, Ae = (o) => (e, ...t) => ({ _$litType$: o, strings: e, values: t }), l = Ae(1), y = /* @__PURE__ */ Symbol.for("lit-noChange"), p = /* @__PURE__ */ Symbol.for("lit-nothing"), te = /* @__PURE__ */ new WeakMap(), _ = x.createTreeWalker(x, 129);
 function de(o, e) {
   if (!j(o) || !o.hasOwnProperty("raw")) throw Error("invalid template strings array");
@@ -260,7 +260,7 @@ const Ee = (o, e) => {
   for (let c = 0; c < t; c++) {
     const a = o[c];
     let h, u, d = -1, m = 0;
-    for (; m < a.length && (n.lastIndex = m, u = n.exec(a), u !== null); ) m = n.lastIndex, n === w ? u[1] === "!--" ? n = J : u[1] !== void 0 ? n = X : u[2] !== void 0 ? (ce.test(u[2]) && (i = RegExp("</" + u[2], "g")), n = f) : u[3] !== void 0 && (n = f) : n === f ? u[0] === ">" ? (n = i ?? w, d = -1) : u[1] === void 0 ? d = -2 : (d = n.lastIndex - u[2].length, h = u[1], n = u[3] === void 0 ? f : u[3] === '"' ? ee : Q) : n === ee || n === Q ? n = f : n === J || n === X ? n = w : (n = f, i = void 0);
+    for (; m < a.length && (n.lastIndex = m, u = n.exec(a), u !== null); ) m = n.lastIndex, n === w ? u[1] === "!--" ? n = X : u[1] !== void 0 ? n = J : u[2] !== void 0 ? (ce.test(u[2]) && (i = RegExp("</" + u[2], "g")), n = f) : u[3] !== void 0 && (n = f) : n === f ? u[0] === ">" ? (n = i ?? w, d = -1) : u[1] === void 0 ? d = -2 : (d = n.lastIndex - u[2].length, h = u[1], n = u[3] === void 0 ? f : u[3] === '"' ? ee : Q) : n === ee || n === Q ? n = f : n === X || n === J ? n = w : (n = f, i = void 0);
     const b = n === f && o[c + 1].startsWith("/>") ? " " : "";
     r += n === w ? a + ve : d >= 0 ? (s.push(h), a.slice(0, d) + ae + a.slice(d) + g + b) : a + g + (d === -2 ? c : b);
   }
@@ -388,8 +388,8 @@ class M {
   }
   _$AR(e = this._$AA.nextSibling, t) {
     for (this._$AP?.(!1, !0, t); e !== this._$AB; ) {
-      const s = Y(e).nextSibling;
-      Y(e).remove(), e = s;
+      const s = K(e).nextSibling;
+      K(e).remove(), e = s;
     }
   }
   setConnected(e) {
@@ -623,6 +623,7 @@ const se = Ue(class extends Re {
 
   .lcd-panel {
     width: 100%;
+    overflow: hidden;
     padding: 14px;
     border: 2px solid color-mix(in srgb, currentColor 34%, transparent);
     border-radius: 14px;
@@ -979,34 +980,50 @@ const se = Ue(class extends Re {
   }
 
   .lcd-consumption {
+    position: relative;
     display: grid;
-    grid-template-columns: 18px minmax(0, 1fr) 78px 22px;
+    grid-template-columns: 18px minmax(0, 1fr) 66px;
     gap: 8px;
     align-items: center;
+    width: 100%;
+    min-width: 0;
     height: 34px;
     margin-top: 9px;
     padding: 7px 4px 0;
     border-top: 1px solid color-mix(in srgb, currentColor 28%, transparent);
     box-sizing: border-box;
+    overflow: hidden;
+    contain: layout paint;
   }
 
   .lcd-consumption-icon {
     font-size: 14px;
   }
 
+  .lcd-consumption-center {
+    position: absolute;
+    left: 50%;
+    display: inline-flex;
+    align-items: center;
+    color: #111827;
+    transform: translateX(-50%);
+    white-space: nowrap;
+  }
+
+  .lcd-panel.dark .lcd-consumption-center {
+    color: #f8fafc;
+  }
+
   .lcd-consumption-label {
     display: flex;
-    min-width: 0;
-    height: 100%;
     align-items: center;
     justify-content: center;
-    overflow: hidden;
     opacity: 0.68;
   }
 
   .lcd-consumption-label .matrix-word {
-    --matrix-pixel-size: 1.1px;
-    --matrix-pixel-gap: 0.4px;
+    --matrix-pixel-size: 0.9px;
+    --matrix-pixel-gap: 0.34px;
   }
 
   .preset-icon {
@@ -1018,15 +1035,20 @@ const se = Ue(class extends Re {
 
   .lcd-consumption-value {
     display: inline-flex;
-    width: 78px;
+    grid-column: 3;
+    width: 66px;
+    min-width: 66px;
+    max-width: 66px;
+    height: 17px;
     align-items: flex-end;
     justify-content: flex-end;
-    gap: 4px;
-    font-size: 22px;
+    gap: 3px;
+    font-size: 17px;
     line-height: 1;
     color: #111827;
     white-space: nowrap;
     overflow: hidden;
+    contain: size layout paint;
   }
 
   .lcd-panel.dark .lcd-consumption-value {
@@ -1035,16 +1057,20 @@ const se = Ue(class extends Re {
 
   .lcd-consumption-value .lcd-number {
     flex: 0 0 auto;
-    font-size: 22px;
+    height: 17px;
+    font-size: 17px;
   }
 
   .lcd-consumption-unit {
-    padding-bottom: 1px;
-    font: 800 10px/1 Arial, sans-serif;
+    padding-bottom: 0;
+    font: 800 9px/1 Arial, sans-serif;
     letter-spacing: 0.06em;
   }
 
   .power-led {
+    position: absolute;
+    top: 50%;
+    left: calc(100% + 6px);
     width: 1.05em;
     height: 1.05em;
     border: 1px solid color-mix(in srgb, var(--power-led-color) 70%, #111827);
@@ -1058,7 +1084,9 @@ const se = Ue(class extends Re {
     );
     box-shadow: 0 0 6px color-mix(in srgb, var(--power-led-color) 58%, transparent),
       inset 0 -1px 2px rgba(0, 0, 0, 0.32);
-    font-size: 22px;
+    flex: 0 0 auto;
+    font-size: 17px;
+    transform: translateY(-50%);
     transition: background 0.4s ease, border-color 0.4s ease,
       box-shadow 0.4s ease;
   }
@@ -1129,7 +1157,7 @@ const se = Ue(class extends Re {
       animation: none;
     }
   }
-`, Ie = "0.5.1", De = /* @__PURE__ */ new Set(["heating", "cooling", "drying", "fan"]), ie = ["-", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"], oe = {
+`, Ie = "0.5.2", De = /* @__PURE__ */ new Set(["heating", "cooling", "drying", "fan"]), ie = ["-", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"], oe = {
   off: { icon: "mdi:power", color: "#94a3b8" },
   heat: { icon: "mdi:fire", color: "#f97316" },
   cool: { icon: "mdi:snowflake", color: "#1d4ed8" },
@@ -1584,18 +1612,20 @@ const se = Ue(class extends Re {
         style=${`--power-led-color:${a}`}
       >
         <span class="lcd-consumption-icon" aria-hidden="true">⚡</span>
-        <span class="lcd-consumption-label">
-          ${this._renderMatrixWord(this._t("consumption").toUpperCase())}
+        <span class="lcd-consumption-center">
+          <span class="lcd-consumption-label">
+            ${this._renderMatrixWord(this._t("consumption").toUpperCase())}
+          </span>
+          <span
+            class="power-led"
+            role="img"
+            aria-label=${h ? "High power consumption" : "Power consumption"}
+          ></span>
         </span>
         <span class="lcd-consumption-value">
           ${e ? l`${this._renderLcdNumber(e.state)}
                 <span class="lcd-consumption-unit">${s}</span>` : l`<span class="unavailable">${this._t("unavailable")}</span>`}
         </span>
-        <span
-          class="power-led"
-          role="img"
-          aria-label=${h ? "High power consumption" : "Power consumption"}
-        ></span>
       </div>
     `;
   }

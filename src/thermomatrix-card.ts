@@ -13,7 +13,7 @@ import type {
   ThermoMatrixConfig,
 } from "./types";
 
-const VERSION = "0.5.1";
+const VERSION = "0.5.2";
 const WORKING_ACTIONS = new Set(["heating", "cooling", "drying", "fan"]);
 const WHEEL_CHARACTERS = ["-", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
@@ -637,8 +637,17 @@ export class ThermoMatrixCard extends LitElement {
         style=${`--power-led-color:${ledColor}`}
       >
         <span class="lcd-consumption-icon" aria-hidden="true">⚡</span>
-        <span class="lcd-consumption-label">
-          ${this._renderMatrixWord(this._t("consumption").toUpperCase())}
+        <span class="lcd-consumption-center">
+          <span class="lcd-consumption-label">
+            ${this._renderMatrixWord(this._t("consumption").toUpperCase())}
+          </span>
+          <span
+            class="power-led"
+            role="img"
+            aria-label=${warning
+              ? "High power consumption"
+              : "Power consumption"}
+          ></span>
         </span>
         <span class="lcd-consumption-value">
           ${power
@@ -646,11 +655,6 @@ export class ThermoMatrixCard extends LitElement {
                 <span class="lcd-consumption-unit">${unit}</span>`
             : html`<span class="unavailable">${this._t("unavailable")}</span>`}
         </span>
-        <span
-          class="power-led"
-          role="img"
-          aria-label=${warning ? "High power consumption" : "Power consumption"}
-        ></span>
       </div>
     `;
   }
