@@ -5,7 +5,7 @@
 [![Status](https://img.shields.io/badge/status-active%20development-F0B429?style=flat-square)](#project-status)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-dashboard-41BDF5?style=flat-square&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
 [![HACS](https://img.shields.io/badge/HACS-custom%20repository-C346F4?style=flat-square)](https://www.hacs.xyz/)
-[![License](https://img.shields.io/badge/license-MIT-C346F4?style=flat-square)](LICENSE)
+[![License](https://img.shields.io/badge/license-MIT-C346F4?style=flat-square)](https://github.com/issu-lab/thermomatrix-card/blob/main/LICENSE)
 
 **An LCD-inspired climate card for Home Assistant.**
 
@@ -252,7 +252,7 @@ dist/thermomatrix-card.js
 
 ## License
 
-Released under the [MIT License](LICENSE).
+Released under the [MIT License](https://github.com/issu-lab/thermomatrix-card/blob/main/LICENSE).
 
 ---
 
@@ -261,7 +261,7 @@ Released under the [MIT License](LICENSE).
 This project is part of the **iSSU Open Homelab ecosystem**.
 
 <a href="https://github.com/issu-lab/Open-Homelab">
-  <img src="assets/issu-open-homelab-badge.png"
+  <img src="https://raw.githubusercontent.com/issu-lab/thermomatrix-card/main/assets/issu-open-homelab-badge.png"
        alt="Explore iSSU Open Homelab"
        width="480">
 </a>

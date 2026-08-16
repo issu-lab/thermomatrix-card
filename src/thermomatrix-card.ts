@@ -13,7 +13,7 @@ import type {
   ThermoMatrixConfig,
 } from "./types";
 
-const VERSION = "0.4.5";
+const VERSION = "0.5.0";
 const WORKING_ACTIONS = new Set(["heating", "cooling", "drying", "fan"]);
 const WHEEL_CHARACTERS = ["-", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
@@ -289,7 +289,7 @@ export class ThermoMatrixCard extends LitElement {
   }
 
   public getCardSize(): number {
-    return this._config?.show_consumption ? 9 : 8;
+    return 8;
   }
 
   protected render(): TemplateResult {
@@ -324,7 +324,6 @@ export class ThermoMatrixCard extends LitElement {
           ${this._renderModes(climate)} ${this._renderDisplay(climate)}
           ${this._renderTemperatureControls(climate)}
           ${this._renderPresets(climate)}
-          ${this._renderConsumption()}
           <div class="brand">
             ${this._config.name ??
             (climate.attributes.friendly_name as string | undefined) ??
@@ -446,6 +445,7 @@ export class ThermoMatrixCard extends LitElement {
               </div>
             `
           : nothing}
+        ${this._renderConsumption()}
       </div>
     `;
   }
@@ -619,36 +619,38 @@ export class ThermoMatrixCard extends LitElement {
 
     const power = this.hass.states[this._config.power_entity];
     const numeric = Number(power?.state);
-    const active = Number.isFinite(numeric) && numeric > 20;
     const unit = String(power?.attributes.unit_of_measurement ?? "");
     const displayPower = Number.isFinite(numeric) ? numeric : 0;
     const ratio = Math.min(1, Math.max(0, (displayPower - 20) / 1480));
     const hue = Math.round(120 * (1 - ratio));
     const dark = this.hass.themes?.darkMode === true;
-    const background =
-      displayPower <= 20
-        ? dark
-          ? "#374151"
-          : "#d1d5db"
-        : dark
-          ? `hsl(${hue} 62% 28%)`
-          : `hsl(${hue} 72% 78%)`;
+    const ledColor = displayPower <= 20
+      ? dark
+        ? "#6b7280"
+        : "#9ca3af"
+      : `hsl(${hue} 82% ${dark ? "58%" : "40%"})`;
+    const warning = Number.isFinite(numeric) && numeric >= 1500;
 
     return html`
       <div
-        class="consumption ${active ? "active" : ""} ${dark ? "dark" : ""}"
-        style=${`--consumption-background:${background}`}
+        class="lcd-consumption ${warning ? "warning" : ""}"
+        style=${`--power-led-color:${ledColor}`}
       >
-        <span class="consumption-icon">⚡</span>
-        <span class="consumption-label">
+        <span class="lcd-consumption-icon" aria-hidden="true">⚡</span>
+        <span class="lcd-consumption-label">
           ${this._renderMatrixWord(this._t("consumption").toUpperCase())}
         </span>
-        <span class="consumption-value">
+        <span class="lcd-consumption-value">
           ${power
             ? html`${this._renderLcdNumber(power.state)}
-                <span class="consumption-unit">${unit}</span>`
+                <span class="lcd-consumption-unit">${unit}</span>`
             : html`<span class="unavailable">${this._t("unavailable")}</span>`}
         </span>
+        <span
+          class="power-led"
+          role="img"
+          aria-label=${warning ? "High power consumption" : "Power consumption"}
+        ></span>
       </div>
     `;
   }

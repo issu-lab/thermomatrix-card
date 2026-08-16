@@ -451,41 +451,28 @@ export const thermoMatrixStyles = css`
     line-height: 1;
   }
 
-  .consumption {
+  .lcd-consumption {
     display: grid;
-    grid-template-columns: auto minmax(0, 1fr) auto;
-    gap: 10px;
+    grid-template-columns: auto minmax(0, 1fr) auto auto;
+    gap: 8px;
     align-items: center;
-    min-height: 58px;
-    padding: 7px 14px;
-    border: 2px solid var(--tm-neutral-border);
-    border-radius: 14px;
+    min-height: 34px;
+    margin-top: 9px;
+    padding: 7px 4px 0;
+    border-top: 1px solid color-mix(in srgb, currentColor 28%, transparent);
     box-sizing: border-box;
-    color: #111827;
-    background: var(--consumption-background);
-    box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.18),
-      0 3px 10px rgba(0, 0, 0, 0.1);
-    transition: background 0.35s ease, border-color 0.35s ease;
   }
 
-  .consumption.active {
-    border-color: color-mix(in srgb, currentColor 34%, transparent);
+  .lcd-consumption-icon {
+    font-size: 14px;
   }
 
-  .consumption.dark {
-    color: #f8fafc;
-  }
-
-  .consumption-icon {
-    font-size: 18px;
-  }
-
-  .consumption-label {
+  .lcd-consumption-label {
     display: flex;
     height: 100%;
     align-items: center;
     justify-content: center;
-    opacity: 0.72;
+    opacity: 0.68;
   }
 
   .preset-icon {
@@ -495,18 +482,55 @@ export const thermoMatrixStyles = css`
     line-height: 1;
   }
 
-  .consumption-value {
+  .lcd-consumption-value {
     display: inline-flex;
     align-items: flex-end;
-    gap: 6px;
-    font-size: 29px;
+    gap: 4px;
+    font-size: 22px;
     line-height: 1;
   }
 
-  .consumption-unit {
-    padding-bottom: 2px;
-    font: 800 11px/1 Arial, sans-serif;
+  .lcd-consumption-unit {
+    padding-bottom: 1px;
+    font: 800 10px/1 Arial, sans-serif;
     letter-spacing: 0.06em;
+  }
+
+  .power-led {
+    width: 1.05em;
+    height: 1.05em;
+    border: 1px solid color-mix(in srgb, var(--power-led-color) 70%, #111827);
+    border-radius: 50%;
+    box-sizing: border-box;
+    background: radial-gradient(
+      circle at 35% 30%,
+      color-mix(in srgb, var(--power-led-color) 30%, white) 0 12%,
+      var(--power-led-color) 38%,
+      color-mix(in srgb, var(--power-led-color) 72%, #111827) 100%
+    );
+    box-shadow: 0 0 6px color-mix(in srgb, var(--power-led-color) 58%, transparent),
+      inset 0 -1px 2px rgba(0, 0, 0, 0.32);
+    font-size: 22px;
+    transition: background 0.4s ease, border-color 0.4s ease,
+      box-shadow 0.4s ease;
+  }
+
+  .lcd-consumption.warning .power-led {
+    animation: power-led-warning 2.4s ease-in-out infinite;
+  }
+
+  @keyframes power-led-warning {
+    0%,
+    100% {
+      opacity: 1;
+      box-shadow: 0 0 6px color-mix(in srgb, var(--power-led-color) 62%, transparent),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.32);
+    }
+    50% {
+      opacity: 0.48;
+      box-shadow: 0 0 2px color-mix(in srgb, var(--power-led-color) 32%, transparent),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.32);
+    }
   }
 
   .unavailable {
@@ -552,7 +576,8 @@ export const thermoMatrixStyles = css`
   @media (prefers-reduced-motion: reduce) {
     .wheel-strip,
     .external-status-slide,
-    .status-box.active.blink .matrix-word {
+    .status-box.active.blink .matrix-word,
+    .lcd-consumption.warning .power-led {
       animation: none;
     }
   }
