@@ -248,7 +248,7 @@ let $ = class extends HTMLElement {
 };
 $.elementStyles = [], $.shadowRootOptions = { mode: "open" }, $[A("elementProperties")] = /* @__PURE__ */ new Map(), $[A("finalized")] = /* @__PURE__ */ new Map(), ye?.({ ReactiveElement: $ }), (R.reactiveElementVersions ??= []).push("2.1.2");
 const W = globalThis, K = (o) => o, T = W.trustedTypes, Z = T ? T.createPolicy("lit-html", { createHTML: (o) => o }) : void 0, ae = "$lit$", g = `lit$${Math.random().toFixed(9).slice(2)}$`, le = "?" + g, ve = `<${le}>`, x = document, S = () => x.createComment(""), C = (o) => o === null || typeof o != "object" && typeof o != "function", j = Array.isArray, we = (o) => j(o) || typeof o?.[Symbol.iterator] == "function", H = `[ 	
-\f\r]`, w = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, X = /-->/g, J = />/g, f = RegExp(`>|${H}(?:([^\\s"'>=/]+)(${H}*=${H}*(?:[^ 	
+\f\r]`, w = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, J = /-->/g, X = />/g, f = RegExp(`>|${H}(?:([^\\s"'>=/]+)(${H}*=${H}*(?:[^ 	
 \f\r"'\`<>=]|("|')|))|$)`, "g"), Q = /'/g, ee = /"/g, ce = /^(?:script|style|textarea|title)$/i, Ae = (o) => (e, ...t) => ({ _$litType$: o, strings: e, values: t }), l = Ae(1), y = /* @__PURE__ */ Symbol.for("lit-noChange"), p = /* @__PURE__ */ Symbol.for("lit-nothing"), te = /* @__PURE__ */ new WeakMap(), _ = x.createTreeWalker(x, 129);
 function de(o, e) {
   if (!j(o) || !o.hasOwnProperty("raw")) throw Error("invalid template strings array");
@@ -260,7 +260,7 @@ const Ee = (o, e) => {
   for (let c = 0; c < t; c++) {
     const a = o[c];
     let h, u, d = -1, m = 0;
-    for (; m < a.length && (n.lastIndex = m, u = n.exec(a), u !== null); ) m = n.lastIndex, n === w ? u[1] === "!--" ? n = X : u[1] !== void 0 ? n = J : u[2] !== void 0 ? (ce.test(u[2]) && (i = RegExp("</" + u[2], "g")), n = f) : u[3] !== void 0 && (n = f) : n === f ? u[0] === ">" ? (n = i ?? w, d = -1) : u[1] === void 0 ? d = -2 : (d = n.lastIndex - u[2].length, h = u[1], n = u[3] === void 0 ? f : u[3] === '"' ? ee : Q) : n === ee || n === Q ? n = f : n === X || n === J ? n = w : (n = f, i = void 0);
+    for (; m < a.length && (n.lastIndex = m, u = n.exec(a), u !== null); ) m = n.lastIndex, n === w ? u[1] === "!--" ? n = J : u[1] !== void 0 ? n = X : u[2] !== void 0 ? (ce.test(u[2]) && (i = RegExp("</" + u[2], "g")), n = f) : u[3] !== void 0 && (n = f) : n === f ? u[0] === ">" ? (n = i ?? w, d = -1) : u[1] === void 0 ? d = -2 : (d = n.lastIndex - u[2].length, h = u[1], n = u[3] === void 0 ? f : u[3] === '"' ? ee : Q) : n === ee || n === Q ? n = f : n === J || n === X ? n = w : (n = f, i = void 0);
     const b = n === f && o[c + 1].startsWith("/>") ? " " : "";
     r += n === w ? a + ve : d >= 0 ? (s.push(h), a.slice(0, d) + ae + a.slice(d) + g + b) : a + g + (d === -2 ? c : b);
   }
@@ -1002,11 +1002,12 @@ const se = Ue(class extends Re {
 
   .lcd-consumption-center {
     position: absolute;
+    top: 50%;
     left: 50%;
     display: inline-flex;
     align-items: center;
     color: #111827;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     white-space: nowrap;
   }
 
@@ -1022,8 +1023,8 @@ const se = Ue(class extends Re {
   }
 
   .lcd-consumption-label .matrix-word {
-    --matrix-pixel-size: 0.9px;
-    --matrix-pixel-gap: 0.34px;
+    --matrix-pixel-size: 1.05px;
+    --matrix-pixel-gap: 0.38px;
   }
 
   .preset-icon {
@@ -1039,16 +1040,16 @@ const se = Ue(class extends Re {
     width: 66px;
     min-width: 66px;
     max-width: 66px;
-    height: 17px;
-    align-items: flex-end;
+    height: 22px;
+    align-items: center;
     justify-content: flex-end;
     gap: 3px;
     font-size: 17px;
     line-height: 1;
     color: #111827;
     white-space: nowrap;
-    overflow: hidden;
-    contain: size layout paint;
+    overflow: visible;
+    contain: layout;
   }
 
   .lcd-panel.dark .lcd-consumption-value {
@@ -1058,6 +1059,7 @@ const se = Ue(class extends Re {
   .lcd-consumption-value .lcd-number {
     flex: 0 0 auto;
     height: 17px;
+    align-self: center;
     font-size: 17px;
   }
 
@@ -1070,7 +1072,7 @@ const se = Ue(class extends Re {
   .power-led {
     position: absolute;
     top: 50%;
-    left: calc(100% + 6px);
+    left: calc(100% + 10px);
     width: 1.05em;
     height: 1.05em;
     border: 1px solid color-mix(in srgb, var(--power-led-color) 70%, #111827);
@@ -1157,7 +1159,7 @@ const se = Ue(class extends Re {
       animation: none;
     }
   }
-`, Ie = "0.5.2", De = /* @__PURE__ */ new Set(["heating", "cooling", "drying", "fan"]), ie = ["-", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"], oe = {
+`, Ie = "0.5.3", De = /* @__PURE__ */ new Set(["heating", "cooling", "drying", "fan"]), ie = ["-", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"], oe = {
   off: { icon: "mdi:power", color: "#94a3b8" },
   heat: { icon: "mdi:fire", color: "#f97316" },
   cool: { icon: "mdi:snowflake", color: "#1d4ed8" },

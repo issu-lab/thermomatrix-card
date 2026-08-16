@@ -475,11 +475,12 @@ export const thermoMatrixStyles = css`
 
   .lcd-consumption-center {
     position: absolute;
+    top: 50%;
     left: 50%;
     display: inline-flex;
     align-items: center;
     color: #111827;
-    transform: translateX(-50%);
+    transform: translate(-50%, -50%);
     white-space: nowrap;
   }
 
@@ -495,8 +496,8 @@ export const thermoMatrixStyles = css`
   }
 
   .lcd-consumption-label .matrix-word {
-    --matrix-pixel-size: 0.9px;
-    --matrix-pixel-gap: 0.34px;
+    --matrix-pixel-size: 1.05px;
+    --matrix-pixel-gap: 0.38px;
   }
 
   .preset-icon {
@@ -512,16 +513,16 @@ export const thermoMatrixStyles = css`
     width: 66px;
     min-width: 66px;
     max-width: 66px;
-    height: 17px;
-    align-items: flex-end;
+    height: 22px;
+    align-items: center;
     justify-content: flex-end;
     gap: 3px;
     font-size: 17px;
     line-height: 1;
     color: #111827;
     white-space: nowrap;
-    overflow: hidden;
-    contain: size layout paint;
+    overflow: visible;
+    contain: layout;
   }
 
   .lcd-panel.dark .lcd-consumption-value {
@@ -531,6 +532,7 @@ export const thermoMatrixStyles = css`
   .lcd-consumption-value .lcd-number {
     flex: 0 0 auto;
     height: 17px;
+    align-self: center;
     font-size: 17px;
   }
 
@@ -543,7 +545,7 @@ export const thermoMatrixStyles = css`
   .power-led {
     position: absolute;
     top: 50%;
-    left: calc(100% + 6px);
+    left: calc(100% + 10px);
     width: 1.05em;
     height: 1.05em;
     border: 1px solid color-mix(in srgb, var(--power-led-color) 70%, #111827);
