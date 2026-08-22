@@ -13,7 +13,7 @@ import type {
   ThermoMatrixConfig,
 } from "./types";
 
-const VERSION = "0.5.4";
+const VERSION = "0.5.5";
 const WORKING_ACTIONS = new Set(["heating", "cooling", "drying", "fan"]);
 const WHEEL_CHARACTERS = ["-", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
@@ -26,6 +26,16 @@ const MODE_META: Record<string, { icon: string; color: string }> = {
     auto: { icon: "mdi:thermostat-auto", color: "#8b5cf6" },
     heat_cool: { icon: "mdi:autorenew", color: "#8b5cf6" },
   };
+
+const DARK_MODE_COLORS: Record<string, string> = {
+  off: "#94a3b8",
+  heat: "#E36304",
+  cool: "#007AF1",
+  dry: "#00A878",
+  fan_only: "#00A7C4",
+  auto: "#A855F7",
+  heat_cool: "#A855F7",
+};
 
 const SEGMENTS: Record<string, string> = {
   "0": "abcdef",
@@ -78,6 +88,15 @@ const PRESET_META: Record<string, { icon: string; color: string }> = {
   sleep: { icon: "mdi:sleep", color: "#8b5cf6" },
   comfort: { icon: "mdi:sofa", color: "#10b981" },
   eco: { icon: "mdi:leaf", color: "#16a34a" },
+};
+
+const DARK_PRESET_COLORS: Record<string, string> = {
+  none: "#D946EF",
+  home: "#007AF1",
+  away: "#94A3B8",
+  sleep: "#9B5DE5",
+  comfort: "#00A878",
+  eco: "#22C55E",
 };
 
 type Language = "en" | "it" | "es" | "fr" | "de" | "pt";
@@ -307,7 +326,8 @@ export class ThermoMatrixCard extends LitElement {
     }
 
     const mode = climate.state;
-    const modeColor = MODE_META[mode]?.color ?? "#94a3b8";
+    const dark = this.hass.themes?.darkMode === true;
+    const modeColor = this._modeColor(mode, dark);
     const dynamicBorder = this._config.border_mode === "state";
     const shadow =
       dynamicBorder && mode !== "off"
@@ -316,6 +336,7 @@ export class ThermoMatrixCard extends LitElement {
 
     return html`
       <ha-card
+        class=${dark ? "dark" : ""}
         style=${`--tm-border-color:${
           dynamicBorder ? modeColor : "var(--tm-neutral-border)"
         };--tm-card-shadow:${shadow};`}
@@ -337,6 +358,7 @@ export class ThermoMatrixCard extends LitElement {
   private _renderModes(climate: HassEntity): TemplateResult {
     const modes = this._stringArray(climate.attributes.hvac_modes);
     const visibleModes = modes.length > 0 ? modes : [climate.state];
+    const dark = this.hass.themes?.darkMode === true;
 
     return html`
       <div
@@ -349,11 +371,12 @@ export class ThermoMatrixCard extends LitElement {
             icon: "mdi:radiobox-blank",
             color: "#64748b",
           };
+          const color = this._modeColor(mode, dark, meta.color);
           const label = this._translateValue(mode);
           return html`
             <button
               class="mode-button ${climate.state === mode ? "active" : ""}"
-              style=${`--button-color:${meta.color}`}
+              style=${`--button-color:${color}`}
               title=${label}
               aria-label=${label}
               @click=${() => this._setHvacMode(mode)}
@@ -365,6 +388,16 @@ export class ThermoMatrixCard extends LitElement {
         })}
       </div>
     `;
+  }
+
+  private _modeColor(
+    mode: string,
+    dark: boolean,
+    fallback = "#64748b",
+  ): string {
+    return dark
+      ? DARK_MODE_COLORS[mode] ?? MODE_META[mode]?.color ?? fallback
+      : MODE_META[mode]?.color ?? fallback;
   }
 
   private _renderDisplay(climate: HassEntity): TemplateResult {
@@ -386,11 +419,13 @@ export class ThermoMatrixCard extends LitElement {
     const dark = this.hass.themes?.darkMode === true;
     const backgrounds = dark
       ? {
-          heat: "#9a3412",
-          cool: "#172554",
-          dry: "#065f46",
-          fan_only: "#155e75",
-          off: "#374151",
+          heat: "#E36304",
+          cool: "#007AF1",
+          dry: "#00A878",
+          fan_only: "#00A7C4",
+          auto: "#7C3AED",
+          heat_cool: "#7C3AED",
+          off: "#334155",
         }
       : {
           heat: "#fed7aa",
@@ -583,6 +618,7 @@ export class ThermoMatrixCard extends LitElement {
     }
 
     const activePreset = String(climate.attributes.preset_mode ?? "");
+    const dark = this.hass.themes?.darkMode === true;
     return html`
       <div
         class="button-grid button-grid-presets label-${this._config
@@ -594,11 +630,14 @@ export class ThermoMatrixCard extends LitElement {
             icon: "mdi:bookmark-outline",
             color: "#64748b",
           };
+          const color = dark
+            ? DARK_PRESET_COLORS[preset] ?? meta.color
+            : meta.color;
           const label = this._translateValue(preset);
           return html`
             <button
               class=${activePreset === preset ? "active" : ""}
-              style=${`--button-color:${meta.color}`}
+              style=${`--button-color:${color}`}
               title=${label}
               aria-label=${label}
               @click=${() => this._setPreset(preset)}

@@ -66,6 +66,24 @@ export const thermoMatrixStyles = css`
       color-mix(in srgb, var(--button-color) 55%, transparent);
   }
 
+  ha-card.dark button {
+    border-color: rgba(148, 163, 184, 0.38);
+    background: rgba(255, 255, 255, 0.025);
+  }
+
+  ha-card.dark button.active {
+    border-color: color-mix(in srgb, var(--button-color) 82%, white);
+    color: #ffffff;
+    background: linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--button-color) 74%, #0b1020),
+      color-mix(in srgb, var(--button-color) 48%, #0b1020)
+    );
+    box-shadow: 0 0 18px
+        color-mix(in srgb, var(--button-color) 72%, transparent),
+      inset 0 0 12px color-mix(in srgb, white 8%, transparent);
+  }
+
   .mode-button {
     min-height: 58px;
   }
@@ -110,6 +128,9 @@ export const thermoMatrixStyles = css`
 
   .lcd-panel.dark {
     color: #f8fafc;
+    border-color: color-mix(in srgb, white 52%, transparent);
+    box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.28),
+      0 0 16px color-mix(in srgb, var(--lcd-background) 52%, transparent);
   }
 
   .lcd-values {
