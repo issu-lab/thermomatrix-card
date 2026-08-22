@@ -19,18 +19,18 @@ ThermoMatrix provides a clear climate control interface with seven-segment tempe
 
 | Field | Current state |
 |---|---|
-| **Maturity** | 🟢 Stable baseline |
+| **Maturity** | 🟢 Stable |
 | **Used in my homelab** | ✅ Yes |
 | **Recommended for production** | ✅ Yes |
 | **Setup difficulty** | 🟢 Beginner |
 | **Documentation** | ✅ Complete |
-| **Current version** | `0.6.0` |
+| **Current version** | `1.0.0` |
 
 > [!NOTE]
 > **Beginner setup:** installation is handled by HACS. After adding the custom repository, select a climate entity in the visual card editor.
 
 > [!NOTE]
-> Version 0.6.0 is the first stable baseline used daily in the reference Home Assistant installations.
+> Version 1.0.0 is the first stable major release and is used daily in the reference Home Assistant installations.
 
 ---
 
