@@ -2,7 +2,7 @@
 
 <div align="center">
 
-[![Status](https://img.shields.io/badge/status-active%20development-F0B429?style=flat-square)](#project-status)
+[![Status](https://img.shields.io/badge/status-stable-2EA44F?style=flat-square)](#project-status)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-dashboard-41BDF5?style=flat-square&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
 [![HACS](https://img.shields.io/badge/HACS-custom%20repository-C346F4?style=flat-square)](https://www.hacs.xyz/)
 [![License](https://img.shields.io/badge/license-MIT-C346F4?style=flat-square)](https://github.com/issu-lab/thermomatrix-card/blob/main/LICENSE)
@@ -19,17 +19,18 @@ ThermoMatrix provides a clear climate control interface with seven-segment tempe
 
 | Field | Current state |
 |---|---|
-| **Maturity** | 🟡 Active Development |
+| **Maturity** | 🟢 Stable baseline |
 | **Used in my homelab** | ✅ Yes |
-| **Recommended for production** | ❌ Not yet |
+| **Recommended for production** | ✅ Yes |
 | **Setup difficulty** | 🟢 Beginner |
-| **Documentation** | 🟡 In progress |
+| **Documentation** | ✅ Complete |
+| **Current version** | `0.6.0` |
 
 > [!NOTE]
 > **Beginner setup:** installation is handled by HACS. After adding the custom repository, select a climate entity in the visual card editor.
 
-> [!WARNING]
-> ThermoMatrix is under active development. Options and visual details may change between versions.
+> [!NOTE]
+> Version 0.6.0 is the first stable baseline used daily in the reference Home Assistant installations.
 
 ---
 
@@ -48,10 +49,10 @@ The card is built for daily use first, then shared so other Home Assistant users
 - 🎛️ Automatic preset controls that can be disabled.
 - 🟢 LCD-style `ON`, `IDLE` and `OFF` indicators.
 - 🎞️ Optional mechanical wheel status display.
-- ⚡ Optional power-consumption module.
+- ⚡ Optional power monitoring integrated directly into the main LCD, with a dedicated status LED.
 - 📋 Optional extended status from a separate entity.
 - 🎨 Dynamic or neutral borders.
-- 🌓 Automatic light and dark theme support.
+- 🌓 Automatic light and vivid state-aware dark theme support.
 - 🌍 Automatic Home Assistant language detection.
 - 🖱️ Visual configuration editor.
 - ♿ Accessible labels, tooltips and reduced-motion support.
@@ -243,7 +244,7 @@ dist/thermomatrix-card.js
 
 ## Known Limitations
 
-- The project is still evolving and configuration options may change.
+- Additional customization options may be introduced in future releases.
 - Installation currently requires adding the repository manually to HACS.
 - Compatibility has not yet been documented across multiple Home Assistant versions.
 - The visual result depends on the features exposed by the selected climate entity.
