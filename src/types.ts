@@ -31,6 +31,8 @@ export interface ThermoMatrixConfig {
   show_consumption?: boolean;
   power_entity?: string;
   status_entity?: string;
+  show_climate_status?: boolean;
+  show_advanced_status?: boolean;
   language?: "auto" | "en" | "it" | "es" | "fr" | "de" | "pt";
   border_mode?: BorderMode;
   hvac_button_labels?: ButtonLabelMode;

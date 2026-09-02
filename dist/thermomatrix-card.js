@@ -1,7 +1,7 @@
-const P = globalThis, I = P.ShadowRoot && (P.ShadyCSS === void 0 || P.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, W = /* @__PURE__ */ Symbol(), q = /* @__PURE__ */ new WeakMap();
+const P = globalThis, I = P.ShadowRoot && (P.ShadyCSS === void 0 || P.ShadyCSS.nativeShadow) && "adoptedStyleSheets" in Document.prototype && "replace" in CSSStyleSheet.prototype, B = /* @__PURE__ */ Symbol(), q = /* @__PURE__ */ new WeakMap();
 let it = class {
   constructor(t, e, s) {
-    if (this._$cssResult$ = !0, s !== W) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
+    if (this._$cssResult$ = !0, s !== B) throw Error("CSSResult is not constructable. Use `unsafeCSS` or `css` instead.");
     this.cssText = t, this.t = e;
   }
   get styleSheet() {
@@ -17,13 +17,13 @@ let it = class {
     return this.cssText;
   }
 };
-const ht = (i) => new it(typeof i == "string" ? i : i + "", void 0, W), pt = (i, ...t) => {
+const ht = (i) => new it(typeof i == "string" ? i : i + "", void 0, B), pt = (i, ...t) => {
   const e = i.length === 1 ? i[0] : t.reduce((s, o, r) => s + ((n) => {
     if (n._$cssResult$ === !0) return n.cssText;
     if (typeof n == "number") return n;
     throw Error("Value passed to 'css' function must be a 'css' function result: " + n + ". Use 'unsafeCSS' to pass non-literal values, but take care to ensure page security.");
   })(o) + i[r + 1], i[0]);
-  return new it(e, i, W);
+  return new it(e, i, B);
 }, ut = (i, t) => {
   if (I) i.adoptedStyleSheets = t.map((e) => e instanceof CSSStyleSheet ? e : e.styleSheet);
   else for (const e of t) {
@@ -247,7 +247,7 @@ let $ = class extends HTMLElement {
   }
 };
 $.elementStyles = [], $.shadowRootOptions = { mode: "open" }, $[A("elementProperties")] = /* @__PURE__ */ new Map(), $[A("finalized")] = /* @__PURE__ */ new Map(), yt?.({ ReactiveElement: $ }), (U.reactiveElementVersions ??= []).push("2.1.2");
-const B = globalThis, Z = (i) => i, T = B.trustedTypes, J = T ? T.createPolicy("lit-html", { createHTML: (i) => i }) : void 0, at = "$lit$", g = `lit$${Math.random().toFixed(9).slice(2)}$`, lt = "?" + g, vt = `<${lt}>`, x = document, S = () => x.createComment(""), C = (i) => i === null || typeof i != "object" && typeof i != "function", j = Array.isArray, wt = (i) => j(i) || typeof i?.[Symbol.iterator] == "function", H = `[ 	
+const W = globalThis, Z = (i) => i, T = W.trustedTypes, J = T ? T.createPolicy("lit-html", { createHTML: (i) => i }) : void 0, at = "$lit$", g = `lit$${Math.random().toFixed(9).slice(2)}$`, lt = "?" + g, vt = `<${lt}>`, x = document, S = () => x.createComment(""), C = (i) => i === null || typeof i != "object" && typeof i != "function", j = Array.isArray, wt = (i) => j(i) || typeof i?.[Symbol.iterator] == "function", H = `[ 	
 \f\r]`, w = /<(?:(!--|\/[^a-zA-Z])|(\/?[a-zA-Z][^>\s]*)|(\/?$))/g, X = /-->/g, Q = />/g, f = RegExp(`>|${H}(?:([^\\s"'>=/]+)(${H}*=${H}*(?:[^ 	
 \f\r"'\`<>=]|("|')|))|$)`, "g"), tt = /'/g, et = /"/g, ct = /^(?:script|style|textarea|title)$/i, At = (i) => (t, ...e) => ({ _$litType$: i, strings: t, values: e }), c = At(1), y = /* @__PURE__ */ Symbol.for("lit-noChange"), p = /* @__PURE__ */ Symbol.for("lit-nothing"), st = /* @__PURE__ */ new WeakMap(), _ = x.createTreeWalker(x, 129);
 function dt(i, t) {
@@ -461,8 +461,8 @@ class Ot {
     v(this, t);
   }
 }
-const Nt = B.litHtmlPolyfillSupport;
-Nt?.(k, M), (B.litHtmlVersions ??= []).push("3.3.3");
+const Nt = W.litHtmlPolyfillSupport;
+Nt?.(k, M), (W.litHtmlVersions ??= []).push("3.3.3");
 const Pt = (i, t, e) => {
   const s = e?.renderBefore ?? t;
   let o = s._$litPart$;
@@ -1180,7 +1180,7 @@ const ot = Rt(class extends Ut {
       animation: none;
     }
   }
-`, Lt = "1.0.0", Ft = /* @__PURE__ */ new Set(["heating", "cooling", "drying", "fan"]), rt = ["-", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"], D = {
+`, Lt = "1.1.0", Ft = /* @__PURE__ */ new Set(["heating", "cooling", "drying", "fan"]), rt = [" ", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"], D = {
   off: { icon: "mdi:power", color: "#94a3b8" },
   heat: { icon: "mdi:fire", color: "#f97316" },
   cool: { icon: "mdi:snowflake", color: "#1d4ed8" },
@@ -1196,7 +1196,7 @@ const ot = Rt(class extends Ut {
   fan_only: "#00A7C4",
   auto: "#A855F7",
   heat_cool: "#A855F7"
-}, Wt = {
+}, Bt = {
   0: "abcdef",
   1: "bc",
   2: "abdeg",
@@ -1208,7 +1208,7 @@ const ot = Rt(class extends Ut {
   8: "abcdefg",
   9: "abcdfg",
   "-": "g"
-}, Bt = {
+}, Wt = {
   A: ["01110", "10001", "10001", "11111", "10001", "10001", "10001"],
   B: ["11110", "10001", "10001", "11110", "10001", "10001", "11110"],
   C: ["01111", "10000", "10000", "10000", "10000", "10000", "01111"],
@@ -1277,6 +1277,8 @@ const ot = Rt(class extends Ut {
           name: "status_entity",
           selector: { entity: {} }
         },
+        { name: "show_climate_status", selector: { boolean: {} } },
+        { name: "show_advanced_status", selector: { boolean: {} } },
         {
           name: "language",
           selector: {
@@ -1358,6 +1360,8 @@ const ot = Rt(class extends Ut {
         show_consumption: "Show power consumption",
         power_entity: "Power sensor",
         status_entity: "Advanced status sensor",
+        show_climate_status: "Show ON / IDLE / OFF status",
+        show_advanced_status: "Show advanced status",
         language: "Language",
         border_mode: "Card border",
         hvac_button_labels: "HVAC button labels",
@@ -1365,7 +1369,7 @@ const ot = Rt(class extends Ut {
         status_display: "Status display",
         temperature_step: "Temperature step"
       })[t.name ?? ""] ?? t.name,
-      computeHelper: (t) => t.name === "power_entity" ? "Used only when the power module is enabled." : t.name === "status_entity" ? "Optional. Replaces ON, IDLE and OFF inside the LCD." : void 0
+      computeHelper: (t) => t.name === "power_entity" ? "Used only when the power module is enabled." : t.name === "status_entity" ? "Optional. Adds a full-width status line inside the LCD." : t.name === "show_advanced_status" ? "Used only when an advanced status sensor is configured." : void 0
     };
   }
   static getStubConfig(t, e) {
@@ -1375,6 +1379,8 @@ const ot = Rt(class extends Ut {
       ) ?? "",
       show_presets: !0,
       show_consumption: !1,
+      show_climate_status: !0,
+      show_advanced_status: !0,
       border_mode: "state",
       language: "auto",
       hvac_button_labels: "auto",
@@ -1391,6 +1397,8 @@ const ot = Rt(class extends Ut {
       ...t,
       show_presets: t.show_presets ?? !0,
       show_consumption: t.show_consumption ?? !1,
+      show_climate_status: t.show_climate_status ?? !0,
+      show_advanced_status: t.show_advanced_status ?? !0,
       border_mode: t.border_mode ?? "state",
       language: t.language ?? "auto",
       hvac_button_labels: t.hvac_button_labels ?? "auto",
@@ -1471,7 +1479,7 @@ const ot = Rt(class extends Ut {
     return e ? It[t] ?? D[t]?.color ?? s : D[t]?.color ?? s;
   }
   _renderDisplay(t) {
-    const e = t.state, s = String(t.attributes.hvac_action ?? ""), o = e === "off" ? "OFF" : s === "idle" ? "IDLE" : (Ft.has(s), "ON"), r = o === "ON", n = o === "IDLE", l = o === "OFF", a = this._config.status_entity ? this.hass.states[this._config.status_entity] : void 0, h = this.hass.themes?.darkMode === !0, d = (h ? {
+    const e = t.state, s = String(t.attributes.hvac_action ?? ""), o = e === "off" ? "OFF" : s === "idle" ? "IDLE" : (Ft.has(s), "ON"), r = o === "ON", n = o === "IDLE", l = o === "OFF", a = this._config.status_entity ? this.hass.states[this._config.status_entity] : void 0, h = this._config.show_climate_status ?? !0, u = (this._config.show_advanced_status ?? !0) && !!this._config.status_entity, d = this.hass.themes?.darkMode === !0, b = (d ? {
       heat: "#E36304",
       cool: "#007AF1",
       dry: "#00A878",
@@ -1485,30 +1493,30 @@ const ot = Rt(class extends Ut {
       dry: "#a7f3d0",
       fan_only: "#a5f3fc",
       off: "#d1d5db"
-    })[e] ?? (h ? "#334155" : "#cbd5e1");
+    })[e] ?? (d ? "#334155" : "#cbd5e1");
     return c`
       <div
-        class="lcd-panel ${h ? "dark" : ""}"
-        style=${`--lcd-background:${d}`}
+        class="lcd-panel ${d ? "dark" : ""}"
+        style=${`--lcd-background:${b}`}
       >
-        <div class="lcd-values ${this._config.status_entity ? "external" : ""}">
+        <div class="lcd-values ${h ? "" : "external"}">
           <div class="lcd-reading current">
             <span class="lcd-reading-label">${this._t("environment")}</span>
             ${this._renderTemperature(t.attributes.current_temperature)}
           </div>
-          ${this._config.status_entity ? p : this._config.status_display === "indicators" ? c`
+          ${h ? this._config.status_display === "indicators" ? c`
                   <div class="status-stack">
                     ${this._renderStatusIndicator("ON", r, !0)}
                     ${this._renderStatusIndicator("IDLE", n, !0)}
                     ${this._renderStatusIndicator("OFF", l, !1)}
                   </div>
-                ` : c`${this._renderStatusWheel(o)}`}
+                ` : c`${this._renderStatusWheel(o)}` : p}
           <div class="lcd-reading target">
             <span class="lcd-reading-label">${this._t("target")}</span>
             ${this._renderTemperature(t.attributes.temperature)}
           </div>
         </div>
-        ${this._config.status_entity ? c`
+        ${u ? c`
               <div
                 class="lcd-external-status"
                 title=${a ? this._humanize(a.state) : this._t("unavailable")}
@@ -1534,7 +1542,7 @@ const ot = Rt(class extends Ut {
     `;
   }
   _renderDigit(t) {
-    const e = Wt[t] ?? "";
+    const e = Bt[t] ?? "";
     return c`
       <span class="lcd-digit">
         ${[..."abcdefg"].map(
@@ -1548,7 +1556,7 @@ const ot = Rt(class extends Ut {
   _renderStatusWheel(t) {
     return c`
       <div class="status-wheel" role="status" aria-label=${t}>
-        ${[...t === "IDLE" ? t : t === "OFF" ? "-OFF" : "--ON"].map(
+        ${[...t === "IDLE" ? t : t === "OFF" ? " OFF" : "  ON"].map(
       (s, o) => ot(
         `${t}-${o}`,
         this._renderWheelReel(s, o)
@@ -1592,7 +1600,7 @@ const ot = Rt(class extends Ut {
     );
   }
   _renderMatrixChar(t) {
-    const e = (Bt[t] ?? Array(7).fill("00000")).join("");
+    const e = (Wt[t] ?? Array(7).fill("00000")).join("");
     return c`
       <span class="matrix-char">
         ${[...e].map(

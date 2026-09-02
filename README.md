@@ -24,13 +24,13 @@ ThermoMatrix provides a clear climate control interface with seven-segment tempe
 | **Recommended for production** | ✅ Yes |
 | **Setup difficulty** | 🟢 Beginner |
 | **Documentation** | ✅ Complete |
-| **Current version** | `1.0.0` |
+| **Current version** | `1.1.0` |
 
 > [!NOTE]
 > **Beginner setup:** installation is handled by HACS. After adding the custom repository, select a climate entity in the visual card editor.
 
 > [!NOTE]
-> Version 1.0.0 is the first stable major release and is used daily in the reference Home Assistant installations.
+> Version 1.1.0 adds independent standard and advanced status visibility while preserving the established LCD layout.
 
 ---
 
@@ -70,6 +70,14 @@ The gallery below shows the current card in real Home Assistant dashboards with 
 ## Installation with HACS
 
 ThermoMatrix is installed as a HACS custom repository. Manual copying of the JavaScript file is not required.
+
+<div align="center">
+
+[![Open your Home Assistant instance and open ThermoMatrix Card inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=issu-lab&repository=thermomatrix-card&category=plugin)
+
+</div>
+
+The button opens ThermoMatrix Card directly as a custom dashboard repository in HACS. Alternatively, add it manually:
 
 1. Open **HACS** in Home Assistant.
 2. Open the menu in the top-right corner.
@@ -117,6 +125,8 @@ type: custom:thermomatrix-card
 entity: climate.living_room
 show_presets: true
 show_consumption: false
+show_climate_status: true
+show_advanced_status: true
 border_mode: state
 temperature_step: 0.1
 language: auto
@@ -134,6 +144,8 @@ status_display: wheel
 | `show_consumption` | Enables the optional power module. |
 | `power_entity` | Sensor used by the power module. |
 | `status_entity` | Optional entity used for extended operating states. |
+| `show_climate_status` | Shows the standard `ON`, `IDLE` or `OFF` status. |
+| `show_advanced_status` | Shows the full-width advanced status line when `status_entity` is configured. |
 | `border_mode` | Uses a state-based or neutral border. |
 | `temperature_step` | Temperature adjustment step. |
 | `language` | Uses automatic or manually selected translations. |
@@ -164,7 +176,7 @@ The complete name remains available as a tooltip and accessible label.
 
 ## Status Display
 
-The default `wheel` display uses four animated LCD character wheels to show `--ON`, `-OFF` or `IDLE`.
+The default `wheel` display uses four animated LCD character wheels to show `  ON`, ` OFF` or `IDLE`. Leading positions remain blank so that every value keeps the same alignment.
 
 To use the original LCD indicators instead:
 
@@ -174,13 +186,23 @@ status_display: indicators
 
 Available values are `wheel` and `indicators`.
 
-If `status_entity` is configured, its value replaces the standard status display with a full-width status line. The animation runs only when the value changes and is disabled when reduced motion is requested.
+The standard climate status and the optional advanced status can be shown independently or together:
 
 ```yaml
 type: custom:thermomatrix-card
 entity: climate.living_room
 status_entity: sensor.climate_status
+show_climate_status: true
+show_advanced_status: true
 ```
+
+Set either selector to `false` to hide that part of the display. When both are enabled, `ON`, `IDLE` or `OFF` remains between the temperatures while the advanced state keeps its full-width line below them. The advanced-state animation runs only when its value changes and is disabled when reduced motion is requested.
+
+### Recommended companion: ThermoPilot
+
+[ThermoPilot](https://github.com/issu-lab/thermopilot) is a native Home Assistant climate controller designed to work especially well with ThermoMatrix. ThermoMatrix automatically follows the HVAC modes and presets exposed by ThermoPilot and can display its optional power-feedback or advanced status sensor through `status_entity`.
+
+ThermoPilot is optional: ThermoMatrix remains compatible with any Home Assistant `climate` entity.
 
 ---
 

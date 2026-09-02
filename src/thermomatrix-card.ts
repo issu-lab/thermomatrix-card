@@ -13,9 +13,9 @@ import type {
   ThermoMatrixConfig,
 } from "./types";
 
-const VERSION = "1.0.0";
+const VERSION = "1.1.0";
 const WORKING_ACTIONS = new Set(["heating", "cooling", "drying", "fan"]);
-const WHEEL_CHARACTERS = ["-", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
+const WHEEL_CHARACTERS = [" ", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
 const MODE_META: Record<string, { icon: string; color: string }> = {
     off: { icon: "mdi:power", color: "#94a3b8" },
@@ -146,6 +146,8 @@ export class ThermoMatrixCard extends LitElement {
           name: "status_entity",
           selector: { entity: {} },
         },
+        { name: "show_climate_status", selector: { boolean: {} } },
+        { name: "show_advanced_status", selector: { boolean: {} } },
         {
           name: "language",
           selector: {
@@ -228,6 +230,8 @@ export class ThermoMatrixCard extends LitElement {
           show_consumption: "Show power consumption",
           power_entity: "Power sensor",
           status_entity: "Advanced status sensor",
+          show_climate_status: "Show ON / IDLE / OFF status",
+          show_advanced_status: "Show advanced status",
           language: "Language",
           border_mode: "Card border",
           hvac_button_labels: "HVAC button labels",
@@ -239,7 +243,9 @@ export class ThermoMatrixCard extends LitElement {
         schema.name === "power_entity"
           ? "Used only when the power module is enabled."
           : schema.name === "status_entity"
-            ? "Optional. Replaces ON, IDLE and OFF inside the LCD."
+            ? "Optional. Adds a full-width status line inside the LCD."
+            : schema.name === "show_advanced_status"
+              ? "Used only when an advanced status sensor is configured."
             : undefined,
     };
   }
@@ -259,6 +265,8 @@ export class ThermoMatrixCard extends LitElement {
       entity: suggested,
       show_presets: true,
       show_consumption: false,
+      show_climate_status: true,
+      show_advanced_status: true,
       border_mode: "state",
       language: "auto",
       hvac_button_labels: "auto",
@@ -279,6 +287,8 @@ export class ThermoMatrixCard extends LitElement {
       ...config,
       show_presets: config.show_presets ?? true,
       show_consumption: config.show_consumption ?? false,
+      show_climate_status: config.show_climate_status ?? true,
+      show_advanced_status: config.show_advanced_status ?? true,
       border_mode: config.border_mode ?? "state",
       language: config.language ?? "auto",
       hvac_button_labels: config.hvac_button_labels ?? "auto",
@@ -416,6 +426,10 @@ export class ThermoMatrixCard extends LitElement {
     const externalStatus = this._config.status_entity
       ? this.hass.states[this._config.status_entity]
       : undefined;
+    const showClimateStatus = this._config.show_climate_status ?? true;
+    const showAdvancedStatus =
+      (this._config.show_advanced_status ?? true) &&
+      Boolean(this._config.status_entity);
     const dark = this.hass.themes?.darkMode === true;
     const backgrounds = dark
       ? {
@@ -443,12 +457,12 @@ export class ThermoMatrixCard extends LitElement {
         class="lcd-panel ${dark ? "dark" : ""}"
         style=${`--lcd-background:${background}`}
       >
-        <div class="lcd-values ${this._config.status_entity ? "external" : ""}">
+        <div class="lcd-values ${showClimateStatus ? "" : "external"}">
           <div class="lcd-reading current">
             <span class="lcd-reading-label">${this._t("environment")}</span>
             ${this._renderTemperature(climate.attributes.current_temperature)}
           </div>
-          ${!this._config.status_entity
+          ${showClimateStatus
             ? this._config.status_display === "indicators"
               ? html`
                   <div class="status-stack">
@@ -464,7 +478,7 @@ export class ThermoMatrixCard extends LitElement {
             ${this._renderTemperature(climate.attributes.temperature)}
           </div>
         </div>
-        ${this._config.status_entity
+        ${showAdvancedStatus
           ? html`
               <div
                 class="lcd-external-status"
@@ -521,8 +535,8 @@ export class ThermoMatrixCard extends LitElement {
     const padded = status === "IDLE"
       ? status
       : status === "OFF"
-        ? "-OFF"
-        : "--ON";
+        ? " OFF"
+        : "  ON";
 
     return html`
       <div class="status-wheel" role="status" aria-label=${status}>
