@@ -24,13 +24,13 @@ ThermoMatrix provides a clear climate control interface with seven-segment tempe
 | **Recommended for production** | ✅ Yes |
 | **Setup difficulty** | 🟢 Beginner |
 | **Documentation** | ✅ Complete |
-| **Current version** | `1.1.0` |
+| **Current version** | `1.2.0` |
 
 > [!NOTE]
 > **Beginner setup:** installation is handled by HACS. After adding the custom repository, select a climate entity in the visual card editor.
 
 > [!NOTE]
-> Version 1.1.0 adds independent standard and advanced status visibility while preserving the established LCD layout.
+> Version 1.2.0 introduces a compact supplemental status and power row, translated advanced states and selectable display fonts.
 
 ---
 
@@ -132,7 +132,8 @@ temperature_step: 0.1
 language: auto
 hvac_button_labels: auto
 preset_button_labels: auto
-status_display: wheel
+status_display: indicators
+display_font: lcd
 ```
 
 ### Main options
@@ -143,7 +144,7 @@ status_display: wheel
 | `show_presets` | Shows presets reported by the climate entity. |
 | `show_consumption` | Enables the optional power module. |
 | `power_entity` | Sensor used by the power module. |
-| `status_entity` | Optional entity used for extended operating states. |
+| `status_entity` | Optional entity used for translated extended operating states. |
 | `show_climate_status` | Shows the standard `ON`, `IDLE` or `OFF` status. |
 | `show_advanced_status` | Shows the full-width advanced status line when `status_entity` is configured. |
 | `border_mode` | Uses a state-based or neutral border. |
@@ -152,6 +153,7 @@ status_display: wheel
 | `hvac_button_labels` | Controls HVAC button text visibility. |
 | `preset_button_labels` | Controls preset button text visibility. |
 | `status_display` | Selects the mechanical wheel or LCD indicators. |
+| `display_font` | Selects the original LCD, condensed or monospace display style. |
 
 ---
 
@@ -176,12 +178,12 @@ The complete name remains available as a tooltip and accessible label.
 
 ## Status Display
 
-The default `wheel` display uses four animated LCD character wheels to show `  ON`, ` OFF` or `IDLE`. Leading positions remain blank so that every value keeps the same alignment.
+The default `indicators` display keeps the three compact `ON`, `IDLE` and `OFF` boxes. The active `ON` or `IDLE` label blinks as before.
 
-To use the original LCD indicators instead:
+The mechanical alphabet wheel remains available as an optional legacy style:
 
 ```yaml
-status_display: indicators
+status_display: wheel
 ```
 
 Available values are `wheel` and `indicators`.
@@ -196,7 +198,21 @@ show_climate_status: true
 show_advanced_status: true
 ```
 
-Set either selector to `false` to hide that part of the display. When both are enabled, `ON`, `IDLE` or `OFF` remains between the temperatures while the advanced state keeps its full-width line below them. The advanced-state animation runs only when its value changes and is disabled when reduced motion is requested.
+Set either selector to `false` to hide that part of the display. When both are enabled, the three essential status boxes remain between the temperatures while the translated advanced state appears in the compact lower row. Its animation runs only when the value changes and is disabled when reduced motion is requested.
+
+The advanced state is translated when it matches common controller values such as `online`, `initializing`, `starting`, `idle`, `cooling`, `heating`, `drying`, `off` or `error`. Unknown values remain available through a humanized fallback.
+
+### Display font
+
+Values can use one of three display styles:
+
+```yaml
+display_font: lcd
+```
+
+- `lcd` — original seven-segment temperatures and power values.
+- `condensed` — compact proportional values.
+- `mono` — technical monospaced values.
 
 ### Recommended companion: ThermoPilot
 
@@ -217,6 +233,8 @@ show_consumption: true
 power_entity: sensor.climate_power
 border_mode: state
 ```
+
+Power shares the compact lower row with the advanced status. It is hidden automatically when the configured sensor does not exist, and the whole lower row disappears when neither optional module is available.
 
 ---
 

@@ -13,7 +13,7 @@ import type {
   ThermoMatrixConfig,
 } from "./types";
 
-const VERSION = "1.1.0";
+const VERSION = "1.2.0";
 const WORKING_ACTIONS = new Set(["heating", "cooling", "drying", "fan"]);
 const WHEEL_CHARACTERS = [" ", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
@@ -112,6 +112,24 @@ const TRANSLATIONS: Record<Language, Record<TranslationKey, string>> = {
   fr: { loading: "Chargement…", unavailable: "Indisponible", environment: "AMBIANCE", target: "CIBLE", consumption: "PUISSANCE", off: "Arrêt", heat: "Chauffage", cool: "Froid", dry: "Déshumidifier", fan_only: "Ventilateur", auto: "Auto", heat_cool: "Auto", none: "Manuel", home: "Maison", away: "Absent", sleep: "Nuit", comfort: "Confort", eco: "Éco" },
   de: { loading: "Laden…", unavailable: "Nicht verfügbar", environment: "RAUM", target: "ZIEL", consumption: "LEISTUNG", off: "Aus", heat: "Heizen", cool: "Kühlen", dry: "Entfeuchten", fan_only: "Lüfter", auto: "Auto", heat_cool: "Auto", none: "Manuell", home: "Zuhause", away: "Abwesend", sleep: "Nacht", comfort: "Komfort", eco: "Eco" },
   pt: { loading: "A carregar…", unavailable: "Indisponível", environment: "AMBIENTE", target: "ALVO", consumption: "CONSUMO", off: "Desligado", heat: "Aquecer", cool: "Arrefecer", dry: "Desumidificar", fan_only: "Ventoinha", auto: "Auto", heat_cool: "Auto", none: "Manual", home: "Casa", away: "Ausente", sleep: "Noite", comfort: "Conforto", eco: "Eco" },
+};
+
+const STATUS_LABELS: Record<Language, string> = {
+  en: "STATUS",
+  it: "STATO",
+  es: "ESTADO",
+  fr: "ÉTAT",
+  de: "STATUS",
+  pt: "ESTADO",
+};
+
+const STATUS_TRANSLATIONS: Record<Language, Record<string, string>> = {
+  en: { online: "ONLINE", initializing: "STARTING", activating: "STARTING", starting: "STARTING", turning_off: "STOPPING", stopping: "STOPPING", idle: "IDLE", standby: "IDLE", cooling: "COOLING", heating: "HEATING", drying: "DRYING", dehumidifying: "DRYING", off: "OFF", on: "ACTIVE", active: "ACTIVE", degraded: "DEGRADED", error: "ERROR", unknown: "UNKNOWN" },
+  it: { online: "ONLINE", initializing: "AVVIO", activating: "AVVIO", starting: "AVVIO", turning_off: "ARRESTO", stopping: "ARRESTO", idle: "ATTESA", standby: "ATTESA", cooling: "RAFFRESCA", heating: "RISCALDA", drying: "DEUMIDIFICA", dehumidifying: "DEUMIDIFICA", off: "SPENTO", on: "ATTIVO", active: "ATTIVO", degraded: "DEGRADATO", error: "ERRORE", unknown: "SCONOSCIUTO" },
+  es: { online: "EN LÍNEA", initializing: "INICIANDO", activating: "INICIANDO", starting: "INICIANDO", turning_off: "APAGANDO", stopping: "APAGANDO", idle: "EN ESPERA", standby: "EN ESPERA", cooling: "ENFRIANDO", heating: "CALENTANDO", drying: "SECANDO", dehumidifying: "SECANDO", off: "APAGADO", on: "ACTIVO", active: "ACTIVO", degraded: "DEGRADADO", error: "ERROR", unknown: "DESCONOCIDO" },
+  fr: { online: "EN LIGNE", initializing: "DÉMARRAGE", activating: "DÉMARRAGE", starting: "DÉMARRAGE", turning_off: "ARRÊT", stopping: "ARRÊT", idle: "ATTENTE", standby: "ATTENTE", cooling: "REFROIDIT", heating: "CHAUFFE", drying: "DÉSHUMIDIFIE", dehumidifying: "DÉSHUMIDIFIE", off: "ARRÊTÉ", on: "ACTIF", active: "ACTIF", degraded: "DÉGRADÉ", error: "ERREUR", unknown: "INCONNU" },
+  de: { online: "ONLINE", initializing: "STARTET", activating: "STARTET", starting: "STARTET", turning_off: "STOPPT", stopping: "STOPPT", idle: "BEREIT", standby: "BEREIT", cooling: "KÜHLT", heating: "HEIZT", drying: "ENTFEUCHTET", dehumidifying: "ENTFEUCHTET", off: "AUS", on: "AKTIV", active: "AKTIV", degraded: "EINGESCHRÄNKT", error: "FEHLER", unknown: "UNBEKANNT" },
+  pt: { online: "ONLINE", initializing: "A INICIAR", activating: "A INICIAR", starting: "A INICIAR", turning_off: "A DESLIGAR", stopping: "A DESLIGAR", idle: "EM ESPERA", standby: "EM ESPERA", cooling: "A ARREFECER", heating: "A AQUECER", drying: "A SECAR", dehumidifying: "A SECAR", off: "DESLIGADO", on: "ATIVO", active: "ATIVO", degraded: "DEGRADADO", error: "ERRO", unknown: "DESCONHECIDO" },
 };
 
 export class ThermoMatrixCard extends LitElement {
@@ -216,6 +234,19 @@ export class ThermoMatrixCard extends LitElement {
           },
         },
         {
+          name: "display_font",
+          selector: {
+            select: {
+              mode: "dropdown",
+              options: [
+                { value: "lcd", label: "Original LCD" },
+                { value: "condensed", label: "Condensed" },
+                { value: "mono", label: "Monospace" },
+              ],
+            },
+          },
+        },
+        {
           name: "temperature_step",
           selector: {
             number: { min: 0.1, max: 5, step: 0.1, mode: "box" },
@@ -237,6 +268,7 @@ export class ThermoMatrixCard extends LitElement {
           hvac_button_labels: "HVAC button labels",
           preset_button_labels: "Preset button labels",
           status_display: "Status display",
+          display_font: "Display font",
           temperature_step: "Temperature step",
         })[schema.name ?? ""] ?? schema.name,
       computeHelper: (schema: { name?: string }) =>
@@ -271,7 +303,8 @@ export class ThermoMatrixCard extends LitElement {
       language: "auto",
       hvac_button_labels: "auto",
       preset_button_labels: "auto",
-      status_display: "wheel",
+      status_display: "indicators",
+      display_font: "lcd",
     };
   }
 
@@ -293,7 +326,8 @@ export class ThermoMatrixCard extends LitElement {
       language: config.language ?? "auto",
       hvac_button_labels: config.hvac_button_labels ?? "auto",
       preset_button_labels: config.preset_button_labels ?? "auto",
-      status_display: config.status_display ?? "wheel",
+      status_display: config.status_display ?? "indicators",
+      display_font: config.display_font ?? "lcd",
     };
   }
 
@@ -346,7 +380,8 @@ export class ThermoMatrixCard extends LitElement {
 
     return html`
       <ha-card
-        class=${dark ? "dark" : ""}
+        class=${`${dark ? "dark " : ""}display-font-${this._config
+          .display_font ?? "lcd"}`}
         style=${`--tm-border-color:${
           dynamicBorder ? modeColor : "var(--tm-neutral-border)"
         };--tm-card-shadow:${shadow};`}
@@ -426,10 +461,15 @@ export class ThermoMatrixCard extends LitElement {
     const externalStatus = this._config.status_entity
       ? this.hass.states[this._config.status_entity]
       : undefined;
+    const powerEntity = this._config.power_entity
+      ? this.hass.states[this._config.power_entity]
+      : undefined;
     const showClimateStatus = this._config.show_climate_status ?? true;
     const showAdvancedStatus =
       (this._config.show_advanced_status ?? true) &&
       Boolean(this._config.status_entity);
+    const showPower =
+      Boolean(this._config.show_consumption) && Boolean(powerEntity);
     const dark = this.hass.themes?.darkMode === true;
     const backgrounds = dark
       ? {
@@ -478,23 +518,12 @@ export class ThermoMatrixCard extends LitElement {
             ${this._renderTemperature(climate.attributes.temperature)}
           </div>
         </div>
-        ${showAdvancedStatus
-          ? html`
-              <div
-                class="lcd-external-status"
-                title=${externalStatus
-                  ? this._humanize(externalStatus.state)
-                  : this._t("unavailable")}
-              >
-                ${this._renderExternalStatus(
-                  externalStatus
-                    ? this._humanize(externalStatus.state).toUpperCase()
-                    : this._t("unavailable").toUpperCase(),
-                )}
-              </div>
-            `
-          : nothing}
-        ${this._renderConsumption()}
+        ${this._renderSupplementalRow(
+          externalStatus,
+          powerEntity,
+          showAdvancedStatus,
+          showPower,
+        )}
       </div>
     `;
   }
@@ -502,6 +531,14 @@ export class ThermoMatrixCard extends LitElement {
   private _renderTemperature(value: unknown): TemplateResult {
     const numeric = Number(value);
     const formatted = Number.isFinite(numeric) ? numeric.toFixed(1) : "--";
+
+    if (this._config.display_font !== "lcd") {
+      return html`
+        <span class="text-display temperature-text">
+          ${formatted}<i class="text-degree">°</i>
+        </span>
+      `;
+    }
 
     return html`
       <span class="lcd-display">
@@ -559,9 +596,7 @@ export class ThermoMatrixCard extends LitElement {
       <span class="status-box ${active ? "active" : ""} ${active && blink
         ? "blink"
         : ""}">
-        <span class="matrix-word">
-          ${[...label].map((character) => this._renderMatrixChar(character))}
-        </span>
+        <span class="status-text">${label}</span>
       </span>
     `;
   }
@@ -590,9 +625,7 @@ export class ThermoMatrixCard extends LitElement {
   private _renderExternalStatus(value: string): unknown {
     return keyed(
       value,
-      html`<span class="external-status-slide">
-        ${this._renderMatrixWord(value)}
-      </span>`,
+      html`<span class="external-status-slide">${value}</span>`,
     );
   }
 
@@ -665,49 +698,53 @@ export class ThermoMatrixCard extends LitElement {
     `;
   }
 
-  private _renderConsumption(): TemplateResult | typeof nothing {
-    if (!this._config.show_consumption || !this._config.power_entity) {
+  private _renderSupplementalRow(
+    externalStatus: HassEntity | undefined,
+    power: HassEntity | undefined,
+    showAdvancedStatus: boolean,
+    showPower: boolean,
+  ): TemplateResult | typeof nothing {
+    if (!showAdvancedStatus && !showPower) {
       return nothing;
     }
 
-    const power = this.hass.states[this._config.power_entity];
     const numeric = Number(power?.state);
     const unit = String(power?.attributes.unit_of_measurement ?? "");
-    const displayPower = Number.isFinite(numeric) ? numeric : 0;
-    const ratio = Math.min(1, Math.max(0, (displayPower - 20) / 1480));
-    const hue = Math.round(120 * (1 - ratio));
-    const dark = this.hass.themes?.darkMode === true;
-    const ledColor = displayPower <= 20
-      ? dark
-        ? "#6b7280"
-        : "#9ca3af"
-      : `hsl(${hue} 82% ${dark ? "58%" : "40%"})`;
-    const warning = Number.isFinite(numeric) && numeric >= 1500;
+    const advancedStatus = externalStatus
+      ? this._translateAdvancedStatus(externalStatus.state)
+      : this._t("unavailable").toUpperCase();
 
     return html`
-      <div
-        class="lcd-consumption ${warning ? "power-warning" : ""}"
-        style=${`--power-led-color:${ledColor}`}
-      >
-        <span class="lcd-consumption-icon" aria-hidden="true">⚡</span>
-        <span class="lcd-consumption-center">
-          <span class="lcd-consumption-label">
-            ${this._renderMatrixWord(this._t("consumption").toUpperCase())}
-          </span>
-          <span
-            class="power-led"
-            role="img"
-            aria-label=${warning
-              ? "High power consumption"
-              : "Power consumption"}
-          ></span>
-        </span>
-        <span class="lcd-consumption-value">
-          ${power
-            ? html`${this._renderLcdNumber(power.state)}
-                <span class="lcd-consumption-unit">${unit}</span>`
-            : html`<span class="unavailable">${this._t("unavailable")}</span>`}
-        </span>
+      <div class="lcd-supplemental ${showAdvancedStatus ? "" : "power-only"}">
+        ${showAdvancedStatus
+          ? html`
+              <div class="lcd-advanced-status">
+                <span class="lcd-supplemental-label">
+                  ${STATUS_LABELS[this._language()]}
+                </span>
+                <span class="lcd-advanced-value" title=${advancedStatus}>
+                  ${this._renderExternalStatus(advancedStatus)}
+                </span>
+              </div>
+            `
+          : nothing}
+        ${showPower
+          ? html`
+              <div class="lcd-power">
+                <span class="lcd-supplemental-label">
+                  ${this._t("consumption")}
+                </span>
+                <span class="lcd-power-value">
+                  ${Number.isFinite(numeric)
+                    ? this._renderLcdNumber(power?.state)
+                    : html`<span class="unavailable">${this._t("unavailable")}</span>`}
+                  ${Number.isFinite(numeric)
+                    ? html`<span class="lcd-consumption-unit">${unit}</span>`
+                    : nothing}
+                </span>
+              </div>
+            `
+          : nothing}
       </div>
     `;
   }
@@ -717,6 +754,10 @@ export class ThermoMatrixCard extends LitElement {
     const formatted = Number.isFinite(numeric)
       ? String(Math.round(numeric * 10) / 10)
       : "--";
+
+    if (this._config.display_font !== "lcd") {
+      return html`<span class="text-display power-text">${formatted}</span>`;
+    }
 
     return html`
       <span class="lcd-display lcd-number">
@@ -805,6 +846,14 @@ export class ThermoMatrixCard extends LitElement {
     return value in TRANSLATIONS.en
       ? this._t(value as TranslationKey)
       : this._humanize(value);
+  }
+
+  private _translateAdvancedStatus(value: string): string {
+    const normalized = value.trim().toLowerCase().replaceAll(" ", "_");
+    const language = this._language();
+    return STATUS_TRANSLATIONS[language][normalized] ??
+      STATUS_TRANSLATIONS.en[normalized] ??
+      this._humanize(value).toUpperCase();
   }
 
   private _scheduleLabelSync(): void {

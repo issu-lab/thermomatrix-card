@@ -146,7 +146,11 @@ export const thermoMatrixStyles = css`
   }
 
   .lcd-reading {
+    display: inline-flex;
     min-width: 0;
+    flex-direction: column;
+    align-items: center;
+    justify-self: start;
   }
 
   .lcd-reading.current {
@@ -155,6 +159,7 @@ export const thermoMatrixStyles = css`
   }
 
   .lcd-reading.target {
+    justify-self: end;
     font-size: clamp(26px, 7.2vw, 30px);
     text-align: right;
   }
@@ -172,6 +177,24 @@ export const thermoMatrixStyles = css`
     align-items: flex-end;
     gap: 0.055em;
     height: 1em;
+  }
+
+  .text-display {
+    display: inline-flex;
+    align-items: flex-start;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1em;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.045em;
+    line-height: 0.92;
+    text-shadow: 0 0 5px color-mix(in srgb, currentColor 44%, transparent);
+  }
+
+  .text-degree {
+    margin: 0.04em 0 0 0.08em;
+    font-size: 0.4em;
+    font-style: normal;
+    letter-spacing: 0;
   }
 
   .lcd-digit {
@@ -374,8 +397,13 @@ export const thermoMatrixStyles = css`
     opacity: 1;
   }
 
-  .status-box.active.blink .matrix-word {
+  .status-box.active.blink .status-text {
     animation: status-text-blink 1.15s ease-in-out infinite;
+  }
+
+  .status-text {
+    font: 700 10px/1 Arial, Helvetica, sans-serif;
+    letter-spacing: 0.05em;
   }
 
   @keyframes status-text-blink {
@@ -388,33 +416,97 @@ export const thermoMatrixStyles = css`
     }
   }
 
-  .lcd-external-status {
-    display: flex;
+  .lcd-supplemental {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(76px, 0.45fr);
+    gap: 16px;
     width: 100%;
-    min-height: 28px;
-    margin-top: 9px;
-    padding-top: 7px;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    border-top: 1px solid color-mix(in srgb, currentColor 28%, transparent);
-    box-sizing: border-box;
-    text-align: center;
+    min-width: 0;
+    margin-top: 12px;
+    align-items: end;
   }
 
-  .lcd-external-status .matrix-word {
-    max-width: 100%;
-    justify-content: center;
-    gap: 1.4px;
-    --matrix-pixel-size: 1.05px;
-    --matrix-pixel-gap: 0.42px;
+  .lcd-supplemental.power-only {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .lcd-advanced-status,
+  .lcd-power {
+    display: inline-grid;
+    min-width: 0;
+    justify-items: center;
+  }
+
+  .lcd-advanced-status {
+    justify-self: start;
+  }
+
+  .lcd-power {
+    justify-self: end;
+  }
+
+  .lcd-supplemental-label {
+    display: block;
+    margin-bottom: 7px;
+    font: 700 10px/1 sans-serif;
+    letter-spacing: 0.06em;
+    opacity: 0.68;
+  }
+
+  .lcd-advanced-value {
+    position: relative;
+    display: grid;
+    min-width: min(100%, 118px);
+    min-height: 25px;
+    padding-top: 6px;
+    place-items: center;
+    overflow: hidden;
+    box-sizing: border-box;
+    font: 700 13px/1 Arial, Helvetica, sans-serif;
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .lcd-advanced-value::before {
+    position: absolute;
+    top: 0;
+    left: 4%;
+    width: 92%;
+    height: 3px;
+    border-radius: 2px;
+    background: currentColor;
+    box-shadow: 0 0 7px currentColor;
+    content: "";
+    opacity: 0.9;
   }
 
   .external-status-slide {
-    display: inline-flex;
+    display: inline-block;
     max-width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
     animation: external-status-roll 560ms cubic-bezier(0.2, 0.72, 0.22, 1)
       both;
+  }
+
+  .lcd-power-value {
+    display: inline-flex;
+    min-height: 25px;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    font-size: 20px;
+    line-height: 1;
+    white-space: nowrap;
+  }
+
+  .lcd-power-value .lcd-number {
+    height: 20px;
+    font-size: 20px;
+  }
+
+  .lcd-power-value .power-text {
+    font-size: 20px;
   }
 
   @keyframes external-status-roll {
@@ -473,54 +565,6 @@ export const thermoMatrixStyles = css`
     line-height: 1;
   }
 
-  .lcd-consumption {
-    position: relative;
-    display: grid;
-    grid-template-columns: 18px minmax(0, 1fr) 66px;
-    gap: 8px;
-    align-items: center;
-    width: 100%;
-    min-width: 0;
-    height: 34px;
-    margin-top: 9px;
-    padding: 7px 4px 0;
-    border-top: 1px solid color-mix(in srgb, currentColor 28%, transparent);
-    box-sizing: border-box;
-    overflow: visible;
-    contain: layout;
-  }
-
-  .lcd-consumption-icon {
-    font-size: 14px;
-  }
-
-  .lcd-consumption-center {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    display: inline-flex;
-    align-items: center;
-    color: #111827;
-    transform: translate(-50%, -50%);
-    white-space: nowrap;
-  }
-
-  .lcd-panel.dark .lcd-consumption-center {
-    color: #f8fafc;
-  }
-
-  .lcd-consumption-label {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    opacity: 0.68;
-  }
-
-  .lcd-consumption-label .matrix-word {
-    --matrix-pixel-size: 1.2px;
-    --matrix-pixel-gap: 0.42px;
-  }
-
   .preset-icon {
     display: block;
     margin-bottom: 3px;
@@ -528,81 +572,10 @@ export const thermoMatrixStyles = css`
     line-height: 1;
   }
 
-  .lcd-consumption-value {
-    display: inline-flex;
-    grid-column: 3;
-    width: 66px;
-    min-width: 66px;
-    max-width: 66px;
-    height: 22px;
-    align-items: center;
-    justify-content: flex-end;
-    gap: 3px;
-    font-size: 17px;
-    line-height: 1;
-    color: #111827;
-    white-space: nowrap;
-    overflow: visible;
-    contain: layout;
-  }
-
-  .lcd-panel.dark .lcd-consumption-value {
-    color: #f8fafc;
-  }
-
-  .lcd-consumption-value .lcd-number {
-    flex: 0 0 auto;
-    height: 17px;
-    align-self: center;
-    font-size: 17px;
-  }
-
   .lcd-consumption-unit {
     padding-bottom: 0;
     font: 800 9px/1 Arial, sans-serif;
     letter-spacing: 0.06em;
-  }
-
-  .power-led {
-    position: absolute;
-    top: 50%;
-    left: calc(100% + 10px);
-    width: 1.05em;
-    height: 1.05em;
-    border: 1px solid color-mix(in srgb, var(--power-led-color) 70%, #111827);
-    border-radius: 50%;
-    box-sizing: border-box;
-    background: radial-gradient(
-      circle at 35% 30%,
-      color-mix(in srgb, var(--power-led-color) 30%, white) 0 12%,
-      var(--power-led-color) 38%,
-      color-mix(in srgb, var(--power-led-color) 72%, #111827) 100%
-    );
-    box-shadow: 0 0 6px color-mix(in srgb, var(--power-led-color) 58%, transparent),
-      inset 0 -1px 2px rgba(0, 0, 0, 0.32);
-    flex: 0 0 auto;
-    font-size: 17px;
-    transform: translateY(-50%);
-    transition: background 0.4s ease, border-color 0.4s ease,
-      box-shadow 0.4s ease;
-  }
-
-  .lcd-consumption.power-warning .power-led {
-    animation: power-led-warning 2.4s ease-in-out infinite;
-  }
-
-  @keyframes power-led-warning {
-    0%,
-    100% {
-      opacity: 1;
-      box-shadow: 0 0 6px color-mix(in srgb, var(--power-led-color) 62%, transparent),
-        inset 0 -1px 2px rgba(0, 0, 0, 0.32);
-    }
-    50% {
-      opacity: 0.48;
-      box-shadow: 0 0 2px color-mix(in srgb, var(--power-led-color) 32%, transparent),
-        inset 0 -1px 2px rgba(0, 0, 0, 0.32);
-    }
   }
 
   .unavailable {
@@ -616,6 +589,19 @@ export const thermoMatrixStyles = css`
   .matrix-space {
     display: inline-block;
     width: 4px;
+  }
+
+  .display-font-condensed .text-display,
+  .display-font-condensed .status-text,
+  .display-font-condensed .lcd-advanced-value {
+    font-family: "Arial Narrow", "Roboto Condensed", Arial, sans-serif;
+    font-stretch: condensed;
+  }
+
+  .display-font-mono .text-display,
+  .display-font-mono .status-text,
+  .display-font-mono .lcd-advanced-value {
+    font-family: ui-monospace, "SFMono-Regular", Consolas, monospace;
   }
 
   .brand {
@@ -648,8 +634,7 @@ export const thermoMatrixStyles = css`
   @media (prefers-reduced-motion: reduce) {
     .wheel-strip,
     .external-status-slide,
-    .status-box.active.blink .matrix-word,
-    .lcd-consumption.power-warning .power-led {
+    .status-box.active.blink .status-text {
       animation: none;
     }
   }
