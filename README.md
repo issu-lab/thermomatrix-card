@@ -24,13 +24,13 @@ ThermoMatrix provides a clear climate control interface with seven-segment tempe
 | **Recommended for production** | ✅ Yes |
 | **Setup difficulty** | 🟢 Beginner |
 | **Documentation** | ✅ Complete |
-| **Current version** | `1.2.0` |
+| **Current version** | `1.3.0` |
 
 > [!NOTE]
 > **Beginner setup:** installation is handled by HACS. After adding the custom repository, select a climate entity in the visual card editor.
 
 > [!NOTE]
-> Version 1.2.0 introduces a compact supplemental status and power row, translated advanced states and selectable display fonts.
+> Version 1.3.0 simplifies first-time configuration with a compact editor, moves optional controls into an Advanced panel and adds an optional display tap action for opening climate details.
 
 ---
 
@@ -49,7 +49,7 @@ The card is built for daily use first, then shared so other Home Assistant users
 - 🎛️ Automatic preset controls that can be disabled.
 - 🟢 LCD-style `ON`, `IDLE` and `OFF` indicators.
 - 🎞️ Optional mechanical wheel status display.
-- ⚡ Optional power monitoring integrated directly into the main LCD, with a dedicated status LED.
+- ⚡ Optional power monitoring integrated into the compact lower LCD row.
 - 📋 Optional extended status from a separate entity.
 - 🎨 Dynamic or neutral borders.
 - 🌓 Automatic light and vivid state-aware dark theme support.
@@ -107,7 +107,7 @@ HACS manages the dashboard resource automatically.
 2. Enter dashboard edit mode.
 3. Select **Add card**.
 4. Search for **ThermoMatrix Card**.
-5. Select the climate entity and configure the available options in the visual editor.
+5. Select the climate entity and, optionally, enter a custom name. All other settings are available in the collapsed **Advanced** panel.
 
 A minimal YAML configuration is also available:
 
@@ -126,17 +126,21 @@ entity: climate.living_room
 show_presets: true
 show_consumption: false
 show_climate_status: true
-show_advanced_status: true
+show_advanced_status: false
 border_mode: state
 temperature_step: 0.1
-language: auto
-hvac_button_labels: auto
-preset_button_labels: auto
+language: en
+hvac_button_labels: hide
+preset_button_labels: hide
 status_display: indicators
 display_font: lcd
+tap_action:
+  action: none
 ```
 
-### Main options
+The visual editor keeps only **Climate entity** and **Custom name** visible initially. The following options remain available in its collapsed **Advanced** panel and through YAML.
+
+### Configuration options
 
 | Option | Purpose |
 |---|---|
@@ -146,7 +150,7 @@ display_font: lcd
 | `power_entity` | Sensor used by the power module. |
 | `status_entity` | Optional entity used for translated extended operating states. |
 | `show_climate_status` | Shows the standard `ON`, `IDLE` or `OFF` status. |
-| `show_advanced_status` | Shows the full-width advanced status line when `status_entity` is configured. |
+| `show_advanced_status` | Shows the advanced status in the compact lower row when `status_entity` is configured. |
 | `border_mode` | Uses a state-based or neutral border. |
 | `temperature_step` | Temperature adjustment step. |
 | `language` | Uses automatic or manually selected translations. |
@@ -154,6 +158,7 @@ display_font: lcd
 | `preset_button_labels` | Controls preset button text visibility. |
 | `status_display` | Selects the mechanical wheel or LCD indicators. |
 | `display_font` | Selects the original LCD, condensed or monospace display style. |
+| `tap_action` | Enables an optional action when the LCD display is tapped. |
 
 ---
 
@@ -173,6 +178,19 @@ Available values:
 - `hide` — shows only the icon.
 
 The complete name remains available as a tooltip and accessible label.
+
+---
+
+## Display tap action
+
+The display does nothing when tapped by default. Enable **Display tap action** in the Advanced panel, or use YAML, to open the climate entity's Home Assistant more-info dialog:
+
+```yaml
+tap_action:
+  action: more-info
+```
+
+The LCD becomes keyboard accessible when this action is enabled. Pressing Enter or Space opens the same dialog.
 
 ---
 
@@ -216,7 +234,7 @@ display_font: lcd
 
 ### Recommended companion: ThermoPilot
 
-[ThermoPilot](https://github.com/issu-lab/thermopilot) is a native Home Assistant climate controller designed to work especially well with ThermoMatrix. ThermoMatrix automatically follows the HVAC modes and presets exposed by ThermoPilot and can display its optional power-feedback or advanced status sensor through `status_entity`.
+[ThermoPilot](https://github.com/issu-lab/thermopilot) is a native Home Assistant climate controller designed to work especially well with ThermoMatrix. ThermoMatrix automatically follows the HVAC modes and presets exposed by ThermoPilot and can display its optional power sensor through `power_entity` and advanced status sensor through `status_entity`.
 
 ThermoPilot is optional: ThermoMatrix remains compatible with any Home Assistant `climate` entity.
 
@@ -243,10 +261,10 @@ Power shares the compact lower row with the advanced status. It is hidden automa
 The default value is:
 
 ```yaml
-language: auto
+language: en
 ```
 
-ThermoMatrix follows the Home Assistant profile language and falls back to English when the selected language is unavailable.
+Set `language: auto` to follow the Home Assistant profile language. The default language and fallback are English.
 
 Included translations:
 

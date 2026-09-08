@@ -24,6 +24,10 @@ export type ButtonLabelMode = "auto" | "show" | "hide";
 export type StatusDisplayMode = "wheel" | "indicators";
 export type DisplayFont = "lcd" | "condensed" | "mono";
 
+export interface TapActionConfig {
+  action: "more-info" | "none";
+}
+
 export interface ThermoMatrixConfig {
   type: string;
   entity: string;
@@ -41,6 +45,7 @@ export interface ThermoMatrixConfig {
   status_display?: StatusDisplayMode;
   display_font?: DisplayFont;
   temperature_step?: number;
+  tap_action?: TapActionConfig;
 }
 
 declare global {

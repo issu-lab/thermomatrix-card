@@ -13,7 +13,7 @@ import type {
   ThermoMatrixConfig,
 } from "./types";
 
-const VERSION = "1.2.0";
+const VERSION = "1.3.0";
 const WORKING_ACTIONS = new Set(["heating", "cooling", "drying", "fan"]);
 const WHEEL_CHARACTERS = [" ", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
@@ -154,103 +154,118 @@ export class ThermoMatrixCard extends LitElement {
           selector: { entity: { domain: "climate" } },
         },
         { name: "name", selector: { text: {} } },
-        { name: "show_presets", selector: { boolean: {} } },
-        { name: "show_consumption", selector: { boolean: {} } },
         {
-          name: "power_entity",
-          selector: { entity: { domain: "sensor" } },
-        },
-        {
-          name: "status_entity",
-          selector: { entity: {} },
-        },
-        { name: "show_climate_status", selector: { boolean: {} } },
-        { name: "show_advanced_status", selector: { boolean: {} } },
-        {
-          name: "language",
-          selector: {
-            select: {
-              mode: "dropdown",
-              options: [
-                { value: "auto", label: "Automatic (Home Assistant)" },
-                { value: "en", label: "English" },
-                { value: "it", label: "Italiano" },
-                { value: "es", label: "Español" },
-                { value: "fr", label: "Français" },
-                { value: "de", label: "Deutsch" },
-                { value: "pt", label: "Português" },
-              ],
+          type: "expandable",
+          name: "advanced",
+          title: "Advanced",
+          flatten: true,
+          schema: [
+            { name: "show_presets", selector: { boolean: {} } },
+            { name: "show_consumption", selector: { boolean: {} } },
+            {
+              name: "power_entity",
+              selector: { entity: { domain: "sensor" } },
             },
-          },
-        },
-        {
-          name: "border_mode",
-          selector: {
-            select: {
-              mode: "dropdown",
-              options: [
-                { value: "state", label: "State color" },
-                { value: "neutral", label: "Neutral" },
-              ],
+            { name: "status_entity", selector: { entity: {} } },
+            { name: "show_climate_status", selector: { boolean: {} } },
+            { name: "show_advanced_status", selector: { boolean: {} } },
+            {
+              name: "language",
+              selector: {
+                select: {
+                  mode: "dropdown",
+                  options: [
+                    { value: "auto", label: "Automatic (Home Assistant)" },
+                    { value: "en", label: "English" },
+                    { value: "it", label: "Italiano" },
+                    { value: "es", label: "Español" },
+                    { value: "fr", label: "Français" },
+                    { value: "de", label: "Deutsch" },
+                    { value: "pt", label: "Português" },
+                  ],
+                },
+              },
             },
-          },
-        },
-        {
-          name: "hvac_button_labels",
-          selector: {
-            select: {
-              mode: "dropdown",
-              options: [
-                { value: "auto", label: "Automatic" },
-                { value: "show", label: "Always show" },
-                { value: "hide", label: "Icons only" },
-              ],
+            {
+              name: "border_mode",
+              selector: {
+                select: {
+                  mode: "dropdown",
+                  options: [
+                    { value: "state", label: "State color" },
+                    { value: "neutral", label: "Neutral" },
+                  ],
+                },
+              },
             },
-          },
-        },
-        {
-          name: "preset_button_labels",
-          selector: {
-            select: {
-              mode: "dropdown",
-              options: [
-                { value: "auto", label: "Automatic" },
-                { value: "show", label: "Always show" },
-                { value: "hide", label: "Icons only" },
-              ],
+            {
+              name: "hvac_button_labels",
+              selector: {
+                select: {
+                  mode: "dropdown",
+                  options: [
+                    { value: "auto", label: "Automatic" },
+                    { value: "show", label: "Always show" },
+                    { value: "hide", label: "Icons only" },
+                  ],
+                },
+              },
             },
-          },
-        },
-        {
-          name: "status_display",
-          selector: {
-            select: {
-              mode: "dropdown",
-              options: [
-                { value: "wheel", label: "Alphabet wheel" },
-                { value: "indicators", label: "ON / IDLE / OFF indicators" },
-              ],
+            {
+              name: "preset_button_labels",
+              selector: {
+                select: {
+                  mode: "dropdown",
+                  options: [
+                    { value: "auto", label: "Automatic" },
+                    { value: "show", label: "Always show" },
+                    { value: "hide", label: "Icons only" },
+                  ],
+                },
+              },
             },
-          },
-        },
-        {
-          name: "display_font",
-          selector: {
-            select: {
-              mode: "dropdown",
-              options: [
-                { value: "lcd", label: "Original LCD" },
-                { value: "condensed", label: "Condensed" },
-                { value: "mono", label: "Monospace" },
-              ],
+            {
+              name: "status_display",
+              selector: {
+                select: {
+                  mode: "dropdown",
+                  options: [
+                    { value: "wheel", label: "Alphabet wheel" },
+                    { value: "indicators", label: "ON / IDLE / OFF indicators" },
+                  ],
+                },
+              },
             },
-          },
-        },
-        {
-          name: "temperature_step",
-          selector: {
-            number: { min: 0.1, max: 5, step: 0.1, mode: "box" },
-          },
+            {
+              name: "display_font",
+              selector: {
+                select: {
+                  mode: "dropdown",
+                  options: [
+                    { value: "lcd", label: "Original LCD" },
+                    { value: "condensed", label: "Condensed" },
+                    { value: "mono", label: "Monospace" },
+                  ],
+                },
+              },
+            },
+            {
+              name: "temperature_step",
+              selector: {
+                number: { min: 0.1, max: 5, step: 0.1, mode: "box" },
+              },
+            },
+            {
+              name: "tap_action",
+              selector: {
+                ui_action: {
+                  actions: ["more-info", "none"],
+                  default_action: "none",
+                },
+              },
+              context: { entity: "entity" },
+            },
+          ],
         },
       ],
       computeLabel: (schema: { name?: string }) =>
@@ -270,6 +285,7 @@ export class ThermoMatrixCard extends LitElement {
           status_display: "Status display",
           display_font: "Display font",
           temperature_step: "Temperature step",
+          tap_action: "Display tap action",
         })[schema.name ?? ""] ?? schema.name,
       computeHelper: (schema: { name?: string }) =>
         schema.name === "power_entity"
@@ -298,13 +314,15 @@ export class ThermoMatrixCard extends LitElement {
       show_presets: true,
       show_consumption: false,
       show_climate_status: true,
-      show_advanced_status: true,
+      show_advanced_status: false,
       border_mode: "state",
-      language: "auto",
-      hvac_button_labels: "auto",
-      preset_button_labels: "auto",
+      language: "en",
+      hvac_button_labels: "hide",
+      preset_button_labels: "hide",
       status_display: "indicators",
       display_font: "lcd",
+      temperature_step: 0.1,
+      tap_action: { action: "none" },
     };
   }
 
@@ -321,13 +339,15 @@ export class ThermoMatrixCard extends LitElement {
       show_presets: config.show_presets ?? true,
       show_consumption: config.show_consumption ?? false,
       show_climate_status: config.show_climate_status ?? true,
-      show_advanced_status: config.show_advanced_status ?? true,
+      show_advanced_status: config.show_advanced_status ?? false,
       border_mode: config.border_mode ?? "state",
-      language: config.language ?? "auto",
-      hvac_button_labels: config.hvac_button_labels ?? "auto",
-      preset_button_labels: config.preset_button_labels ?? "auto",
+      language: config.language ?? "en",
+      hvac_button_labels: config.hvac_button_labels ?? "hide",
+      preset_button_labels: config.preset_button_labels ?? "hide",
       status_display: config.status_display ?? "indicators",
       display_font: config.display_font ?? "lcd",
+      temperature_step: config.temperature_step ?? 0.1,
+      tap_action: config.tap_action ?? { action: "none" },
     };
   }
 
@@ -466,7 +486,7 @@ export class ThermoMatrixCard extends LitElement {
       : undefined;
     const showClimateStatus = this._config.show_climate_status ?? true;
     const showAdvancedStatus =
-      (this._config.show_advanced_status ?? true) &&
+      (this._config.show_advanced_status ?? false) &&
       Boolean(this._config.status_entity);
     const showPower =
       Boolean(this._config.show_consumption) && Boolean(powerEntity);
@@ -494,8 +514,14 @@ export class ThermoMatrixCard extends LitElement {
 
     return html`
       <div
-        class="lcd-panel ${dark ? "dark" : ""}"
+        class="lcd-panel ${dark ? "dark" : ""} ${this._hasDisplayTapAction()
+          ? "actionable"
+          : ""}"
         style=${`--lcd-background:${background}`}
+        role=${this._hasDisplayTapAction() ? "button" : nothing}
+        tabindex=${this._hasDisplayTapAction() ? "0" : nothing}
+        @click=${this._handleDisplayTap}
+        @keydown=${this._handleDisplayKeydown}
       >
         <div class="lcd-values ${showClimateStatus ? "" : "external"}">
           <div class="lcd-reading current">
@@ -787,6 +813,30 @@ export class ThermoMatrixCard extends LitElement {
       entity_id: this._config.entity,
       hvac_mode: hvacMode,
     });
+  }
+
+  private _hasDisplayTapAction(): boolean {
+    return this._config.tap_action?.action === "more-info";
+  }
+
+  private _handleDisplayTap(): void {
+    if (!this._hasDisplayTapAction()) {
+      return;
+    }
+
+    this.dispatchEvent(new CustomEvent("hass-more-info", {
+      bubbles: true,
+      composed: true,
+      detail: { entityId: this._config.entity },
+    }));
+  }
+
+  private _handleDisplayKeydown(event: KeyboardEvent): void {
+    if (event.key !== "Enter" && event.key !== " ") {
+      return;
+    }
+    event.preventDefault();
+    this._handleDisplayTap();
   }
 
   private async _setPreset(presetMode: string): Promise<void> {

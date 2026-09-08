@@ -133,6 +133,15 @@ export const thermoMatrixStyles = css`
       0 0 16px color-mix(in srgb, var(--lcd-background) 52%, transparent);
   }
 
+  .lcd-panel.actionable {
+    cursor: pointer;
+  }
+
+  .lcd-panel.actionable:focus-visible {
+    outline: 2px solid var(--primary-color, currentColor);
+    outline-offset: 3px;
+  }
+
   .lcd-values {
     display: grid;
     grid-template-columns: minmax(0, 1.12fr) 54px minmax(0, 0.66fr);
