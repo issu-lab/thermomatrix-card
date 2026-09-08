@@ -17,6 +17,13 @@ export interface HomeAssistant {
     service: string,
     data?: Record<string, unknown>,
   ): Promise<unknown>;
+  callWS<T>(message: Record<string, unknown>): Promise<T>;
+  connection?: {
+    subscribeEvents<T>(
+      callback: (event: T) => void,
+      eventType: string,
+    ): Promise<() => void>;
+  };
 }
 
 export type BorderMode = "state" | "neutral";

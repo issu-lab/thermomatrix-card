@@ -24,13 +24,13 @@ ThermoMatrix provides a clear climate control interface with seven-segment tempe
 | **Recommended for production** | ✅ Yes |
 | **Setup difficulty** | 🟢 Beginner |
 | **Documentation** | ✅ Complete |
-| **Current version** | `1.3.0` |
+| **Current version** | `1.4.0` |
 
 > [!NOTE]
 > **Beginner setup:** installation is handled by HACS. After adding the custom repository, select a climate entity in the visual card editor.
 
 > [!NOTE]
-> Version 1.3.0 simplifies first-time configuration with a compact editor, moves optional controls into an Advanced panel and adds an optional display tap action for opening climate details.
+> Version 1.4.0 adds automatic discovery of the unified ThermoPilot status sensor, optional numeric power reuse and compact estimated/confirmed state semantics while preserving manual overrides.
 
 ---
 
@@ -51,6 +51,7 @@ The card is built for daily use first, then shared so other Home Assistant users
 - 🎞️ Optional mechanical wheel status display.
 - ⚡ Optional power monitoring integrated into the compact lower LCD row.
 - 📋 Optional extended status from a separate entity.
+- 🔎 Automatic discovery of the unified ThermoPilot status sensor on the climate device.
 - 🎨 Dynamic or neutral borders.
 - 🌓 Automatic light and vivid state-aware dark theme support.
 - 🌍 Automatic Home Assistant language detection.
@@ -147,8 +148,8 @@ The visual editor keeps only **Climate entity** and **Custom name** visible init
 | `entity` | Climate entity controlled by the card. |
 | `show_presets` | Shows presets reported by the climate entity. |
 | `show_consumption` | Enables the optional power module. |
-| `power_entity` | Sensor used by the power module. |
-| `status_entity` | Optional entity used for translated extended operating states. |
+| `power_entity` | Optional power-sensor override. ThermoPilot can provide numeric power through its discovered status sensor. |
+| `status_entity` | Optional manual override for translated extended operating states. |
 | `show_climate_status` | Shows the standard `ON`, `IDLE` or `OFF` status. |
 | `show_advanced_status` | Shows the advanced status in the compact lower row when `status_entity` is configured. |
 | `border_mode` | Uses a state-based or neutral border. |
@@ -206,7 +207,17 @@ status_display: wheel
 
 Available values are `wheel` and `indicators`.
 
-The standard climate status and the optional advanced status can be shown independently or together:
+The standard climate status and the optional advanced status can be shown independently or together. With ThermoPilot 0.3.0 or later, enable the advanced status without specifying a sensor:
+
+```yaml
+type: custom:thermomatrix-card
+entity: climate.living_room
+show_advanced_status: true
+```
+
+ThermoMatrix reads the Home Assistant entity registry, finds the device associated with the configured climate entity and selects a sensor on the same device only when exactly one candidate exposes `thermopilot_role: status`. No candidate or multiple candidates leave the optional row hidden. The result is cached and refreshed when the climate, Home Assistant connection or entity registry changes.
+
+`status_entity` remains available as an explicit override and always takes precedence:
 
 ```yaml
 type: custom:thermomatrix-card
@@ -218,7 +229,9 @@ show_advanced_status: true
 
 Set either selector to `false` to hide that part of the display. When both are enabled, the three essential status boxes remain between the temperatures while the translated advanced state appears in the compact lower row. Its animation runs only when the value changes and is disabled when reduced motion is requested.
 
-The advanced state is translated when it matches common controller values such as `online`, `initializing`, `starting`, `idle`, `cooling`, `heating`, `drying`, `off` or `error`. Unknown values remain available through a humanized fallback.
+The unified ThermoPilot states `initializing`, `degraded`, `error`, `off`, `on`, `starting`, `stopping`, `waiting`, `retrying` and `unknown` have compact translations in all six supported languages. Existing values such as `online`, `idle`, `cooling`, `heating` and `drying` remain supported for manually configured sensors. Unknown values remain available through a humanized fallback.
+
+When the sensor exposes `state_quality`, confirmed values retain the normal emphasis while estimated physical state is shown with a subtle reduction in intensity. The localized quality remains available in the status tooltip and accessible label.
 
 ### Display font
 
@@ -234,7 +247,7 @@ display_font: lcd
 
 ### Recommended companion: ThermoPilot
 
-[ThermoPilot](https://github.com/issu-lab/thermopilot) is a native Home Assistant climate controller designed to work especially well with ThermoMatrix. ThermoMatrix automatically follows the HVAC modes and presets exposed by ThermoPilot and can display its optional power sensor through `power_entity` and advanced status sensor through `status_entity`.
+[ThermoPilot](https://github.com/issu-lab/thermopilot) is a native Home Assistant climate controller designed to work especially well with ThermoMatrix. From ThermoPilot 0.3.0, ThermoMatrix can discover its unified status sensor automatically through the shared Home Assistant device and use it for advanced state and optional numeric power. Manual `status_entity` and `power_entity` overrides remain supported.
 
 ThermoPilot is optional: ThermoMatrix remains compatible with any Home Assistant `climate` entity.
 
@@ -253,6 +266,16 @@ border_mode: state
 ```
 
 Power shares the compact lower row with the advanced status. It is hidden automatically when the configured sensor does not exist, and the whole lower row disappears when neither optional module is available.
+
+With an autodiscovered ThermoPilot 0.3.0 status sensor, `power_entity` may be omitted:
+
+```yaml
+type: custom:thermomatrix-card
+entity: climate.living_room
+show_consumption: true
+```
+
+Power is rendered only when the selected power entity state or the discovered sensor's `power` attribute is numeric.
 
 ---
 

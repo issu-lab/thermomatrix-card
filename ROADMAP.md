@@ -31,7 +31,21 @@
 - Pulsanti preset generati da `preset_modes`.
 - `none` viene presentato come `Manuale`.
 - Consumo attivabile con un sensore di potenza dedicato.
+- Autodiscovery del sensore di stato ThermoPilot tramite device condiviso e
+  marker stabile `thermopilot_role: status`, con override manuale compatibile.
+- Riutilizzo opzionale dell'attributo numerico `power` del sensore ThermoPilot.
 - Bordo colorato secondo modalità oppure neutro.
+
+## Layout responsive
+
+- Pulsanti HVAC e preset con etichette adattive alla larghezza disponibile.
+- Comportamento predefinito `auto`: icona e testo su schermi normali, sola
+  icona quando lo spazio non consente di mostrare correttamente la traduzione.
+- Opzione futura `button_labels: auto | show | hide`.
+- Tooltip e nome accessibile sempre presenti anche quando il testo visibile
+  viene nascosto.
+- Spaziatura e dimensione del testo ridotte gradualmente prima di passare alla
+  modalità con sole icone.
 
 ## Fasi
 

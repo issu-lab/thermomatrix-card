@@ -450,6 +450,10 @@ export const thermoMatrixStyles = css`
     justify-self: start;
   }
 
+  .lcd-advanced-value.quality-estimated {
+    opacity: 0.78;
+  }
+
   .lcd-power {
     justify-self: end;
   }

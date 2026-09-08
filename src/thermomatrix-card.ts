@@ -7,13 +7,20 @@ import {
 } from "lit";
 import { keyed } from "lit/directives/keyed.js";
 import { thermoMatrixStyles } from "./styles";
+import {
+  discoverThermoPilotStatusEntity,
+  selectNumericPower,
+  selectStatusEntity,
+  StatusDiscoveryCache,
+  type EntityRegistryEntry,
+} from "./status-discovery";
 import type {
   HassEntity,
   HomeAssistant,
   ThermoMatrixConfig,
 } from "./types";
 
-const VERSION = "1.3.0";
+const VERSION = "1.4.0";
 const WORKING_ACTIONS = new Set(["heating", "cooling", "drying", "fan"]);
 const WHEEL_CHARACTERS = [" ", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
@@ -124,12 +131,21 @@ const STATUS_LABELS: Record<Language, string> = {
 };
 
 const STATUS_TRANSLATIONS: Record<Language, Record<string, string>> = {
-  en: { online: "ONLINE", initializing: "STARTING", activating: "STARTING", starting: "STARTING", turning_off: "STOPPING", stopping: "STOPPING", idle: "IDLE", standby: "IDLE", cooling: "COOLING", heating: "HEATING", drying: "DRYING", dehumidifying: "DRYING", off: "OFF", on: "ACTIVE", active: "ACTIVE", degraded: "DEGRADED", error: "ERROR", unknown: "UNKNOWN" },
-  it: { online: "ONLINE", initializing: "AVVIO", activating: "AVVIO", starting: "AVVIO", turning_off: "ARRESTO", stopping: "ARRESTO", idle: "ATTESA", standby: "ATTESA", cooling: "RAFFRESCA", heating: "RISCALDA", drying: "DEUMIDIFICA", dehumidifying: "DEUMIDIFICA", off: "SPENTO", on: "ATTIVO", active: "ATTIVO", degraded: "DEGRADATO", error: "ERRORE", unknown: "SCONOSCIUTO" },
-  es: { online: "EN LÍNEA", initializing: "INICIANDO", activating: "INICIANDO", starting: "INICIANDO", turning_off: "APAGANDO", stopping: "APAGANDO", idle: "EN ESPERA", standby: "EN ESPERA", cooling: "ENFRIANDO", heating: "CALENTANDO", drying: "SECANDO", dehumidifying: "SECANDO", off: "APAGADO", on: "ACTIVO", active: "ACTIVO", degraded: "DEGRADADO", error: "ERROR", unknown: "DESCONOCIDO" },
-  fr: { online: "EN LIGNE", initializing: "DÉMARRAGE", activating: "DÉMARRAGE", starting: "DÉMARRAGE", turning_off: "ARRÊT", stopping: "ARRÊT", idle: "ATTENTE", standby: "ATTENTE", cooling: "REFROIDIT", heating: "CHAUFFE", drying: "DÉSHUMIDIFIE", dehumidifying: "DÉSHUMIDIFIE", off: "ARRÊTÉ", on: "ACTIF", active: "ACTIF", degraded: "DÉGRADÉ", error: "ERREUR", unknown: "INCONNU" },
-  de: { online: "ONLINE", initializing: "STARTET", activating: "STARTET", starting: "STARTET", turning_off: "STOPPT", stopping: "STOPPT", idle: "BEREIT", standby: "BEREIT", cooling: "KÜHLT", heating: "HEIZT", drying: "ENTFEUCHTET", dehumidifying: "ENTFEUCHTET", off: "AUS", on: "AKTIV", active: "AKTIV", degraded: "EINGESCHRÄNKT", error: "FEHLER", unknown: "UNBEKANNT" },
-  pt: { online: "ONLINE", initializing: "A INICIAR", activating: "A INICIAR", starting: "A INICIAR", turning_off: "A DESLIGAR", stopping: "A DESLIGAR", idle: "EM ESPERA", standby: "EM ESPERA", cooling: "A ARREFECER", heating: "A AQUECER", drying: "A SECAR", dehumidifying: "A SECAR", off: "DESLIGADO", on: "ATIVO", active: "ATIVO", degraded: "DEGRADADO", error: "ERRO", unknown: "DESCONHECIDO" },
+  en: { online: "ONLINE", initializing: "STARTING", activating: "STARTING", starting: "STARTING", turning_off: "STOPPING", stopping: "STOPPING", waiting: "WAITING", retrying: "RETRY", idle: "IDLE", standby: "IDLE", cooling: "COOLING", heating: "HEATING", drying: "DRYING", dehumidifying: "DRYING", off: "OFF", on: "ACTIVE", active: "ACTIVE", degraded: "DEGRADED", error: "ERROR", unknown: "UNKNOWN" },
+  it: { online: "ONLINE", initializing: "AVVIO", activating: "AVVIO", starting: "AVVIO", turning_off: "ARRESTO", stopping: "ARRESTO", waiting: "ATTESA", retrying: "RIPROVA", idle: "ATTESA", standby: "ATTESA", cooling: "RAFFRESCA", heating: "RISCALDA", drying: "DEUMIDIFICA", dehumidifying: "DEUMIDIFICA", off: "SPENTO", on: "ATTIVO", active: "ATTIVO", degraded: "DEGRADATO", error: "ERRORE", unknown: "SCONOSCIUTO" },
+  es: { online: "EN LÍNEA", initializing: "INICIANDO", activating: "INICIANDO", starting: "INICIANDO", turning_off: "APAGANDO", stopping: "APAGANDO", waiting: "ESPERA", retrying: "REINTENTA", idle: "EN ESPERA", standby: "EN ESPERA", cooling: "ENFRIANDO", heating: "CALENTANDO", drying: "SECANDO", dehumidifying: "SECANDO", off: "APAGADO", on: "ACTIVO", active: "ACTIVO", degraded: "DEGRADADO", error: "ERROR", unknown: "DESCONOCIDO" },
+  fr: { online: "EN LIGNE", initializing: "DÉMARRAGE", activating: "DÉMARRAGE", starting: "DÉMARRAGE", turning_off: "ARRÊT", stopping: "ARRÊT", waiting: "ATTENTE", retrying: "RÉESSAIE", idle: "ATTENTE", standby: "ATTENTE", cooling: "REFROIDIT", heating: "CHAUFFE", drying: "DÉSHUMIDIFIE", dehumidifying: "DÉSHUMIDIFIE", off: "ARRÊTÉ", on: "ACTIF", active: "ACTIF", degraded: "DÉGRADÉ", error: "ERREUR", unknown: "INCONNU" },
+  de: { online: "ONLINE", initializing: "STARTET", activating: "STARTET", starting: "STARTET", turning_off: "STOPPT", stopping: "STOPPT", waiting: "WARTET", retrying: "NEUSTART", idle: "BEREIT", standby: "BEREIT", cooling: "KÜHLT", heating: "HEIZT", drying: "ENTFEUCHTET", dehumidifying: "ENTFEUCHTET", off: "AUS", on: "AKTIV", active: "AKTIV", degraded: "EINGESCHRÄNKT", error: "FEHLER", unknown: "UNBEKANNT" },
+  pt: { online: "ONLINE", initializing: "A INICIAR", activating: "A INICIAR", starting: "A INICIAR", turning_off: "A DESLIGAR", stopping: "A DESLIGAR", waiting: "ESPERA", retrying: "REPETE", idle: "EM ESPERA", standby: "EM ESPERA", cooling: "A ARREFECER", heating: "A AQUECER", drying: "A SECAR", dehumidifying: "A SECAR", off: "DESLIGADO", on: "ATIVO", active: "ATIVO", degraded: "DEGRADADO", error: "ERRO", unknown: "DESCONHECIDO" },
+};
+
+const QUALITY_LABELS: Record<Language, Record<string, string>> = {
+  en: { confirmed: "Confirmed", estimated: "Estimated" },
+  it: { confirmed: "Confermato", estimated: "Stimato" },
+  es: { confirmed: "Confirmado", estimated: "Estimado" },
+  fr: { confirmed: "Confirmé", estimated: "Estimé" },
+  de: { confirmed: "Bestätigt", estimated: "Geschätzt" },
+  pt: { confirmed: "Confirmado", estimated: "Estimado" },
 };
 
 export class ThermoMatrixCard extends LitElement {
@@ -144,6 +160,12 @@ export class ThermoMatrixCard extends LitElement {
   private _config!: ThermoMatrixConfig;
   private _labelResizeObserver?: ResizeObserver;
   private _labelSyncFrame?: number;
+  private _statusDiscovery = new StatusDiscoveryCache();
+  private _statusDiscoveryPromise?: Promise<void>;
+  private _statusDiscoveryGeneration = 0;
+  private _statusRegistryConnection?: HomeAssistant["connection"];
+  private _unsubscribeStatusRegistry?: () => void;
+  private _statusRegistrySubscriptionGeneration = 0;
 
   public static getConfigForm(): Record<string, unknown> {
     return {
@@ -289,11 +311,11 @@ export class ThermoMatrixCard extends LitElement {
         })[schema.name ?? ""] ?? schema.name,
       computeHelper: (schema: { name?: string }) =>
         schema.name === "power_entity"
-          ? "Used only when the power module is enabled."
+          ? "Optional override. Without it, an autodiscovered ThermoPilot status sensor can provide power."
           : schema.name === "status_entity"
-            ? "Optional. Adds a full-width status line inside the LCD."
+            ? "Optional override. ThermoPilot status sensors are discovered automatically on the climate device."
             : schema.name === "show_advanced_status"
-              ? "Used only when an advanced status sensor is configured."
+              ? "Uses the manual sensor or the uniquely autodiscovered ThermoPilot status sensor."
             : undefined,
     };
   }
@@ -334,6 +356,9 @@ export class ThermoMatrixCard extends LitElement {
       throw new Error("The configured entity must use the climate domain.");
     }
 
+    const previousEntity = this._config?.entity;
+    const previousStatusEntity = this._config?.status_entity;
+
     this._config = {
       ...config,
       show_presets: config.show_presets ?? true,
@@ -349,6 +374,14 @@ export class ThermoMatrixCard extends LitElement {
       temperature_step: config.temperature_step ?? 0.1,
       tap_action: config.tap_action ?? { action: "none" },
     };
+
+    if (
+      previousEntity !== this._config.entity ||
+      previousStatusEntity !== this._config.status_entity
+    ) {
+      this._invalidateStatusDiscovery();
+      void this._ensureStatusDiscovery();
+    }
   }
 
   protected firstUpdated(): void {
@@ -357,15 +390,34 @@ export class ThermoMatrixCard extends LitElement {
     );
     this._labelResizeObserver.observe(this);
     this._scheduleLabelSync();
+    this._syncStatusRegistrySubscription();
+    void this._ensureStatusDiscovery();
+  }
+
+  public connectedCallback(): void {
+    super.connectedCallback();
+    if (this.hass && this._config) {
+      this._syncStatusRegistrySubscription();
+      void this._ensureStatusDiscovery();
+    }
   }
 
   protected updated(_changedProperties: PropertyValues): void {
     this._scheduleLabelSync();
+    if (_changedProperties.has("hass")) {
+      this._syncStatusRegistrySubscription();
+      void this._ensureStatusDiscovery();
+    }
   }
 
   public disconnectedCallback(): void {
     super.disconnectedCallback();
     this._labelResizeObserver?.disconnect();
+    this._unsubscribeStatusRegistry?.();
+    this._unsubscribeStatusRegistry = undefined;
+    this._statusRegistryConnection = undefined;
+    this._statusRegistrySubscriptionGeneration += 1;
+    this._invalidateStatusDiscovery();
     if (this._labelSyncFrame !== undefined) {
       cancelAnimationFrame(this._labelSyncFrame);
     }
@@ -478,8 +530,12 @@ export class ThermoMatrixCard extends LitElement {
     const isOn = status === "ON";
     const isIdle = status === "IDLE";
     const isOff = status === "OFF";
-    const externalStatus = this._config.status_entity
-      ? this.hass.states[this._config.status_entity]
+    const statusEntityId = selectStatusEntity(
+      this._config.status_entity,
+      this._statusDiscovery.get(this._config.entity, this.hass.connection),
+    );
+    const externalStatus = statusEntityId
+      ? this.hass.states[statusEntityId]
       : undefined;
     const powerEntity = this._config.power_entity
       ? this.hass.states[this._config.power_entity]
@@ -487,9 +543,19 @@ export class ThermoMatrixCard extends LitElement {
     const showClimateStatus = this._config.show_climate_status ?? true;
     const showAdvancedStatus =
       (this._config.show_advanced_status ?? false) &&
-      Boolean(this._config.status_entity);
+      Boolean(externalStatus);
+    const powerValue = selectNumericPower(
+      powerEntity?.state,
+      externalStatus?.attributes.power,
+      Boolean(this._config.power_entity),
+    );
+    const powerUnit = powerEntity
+      ? String(powerEntity.attributes.unit_of_measurement ?? "")
+      : powerValue !== undefined
+        ? "W"
+        : "";
     const showPower =
-      Boolean(this._config.show_consumption) && Boolean(powerEntity);
+      Boolean(this._config.show_consumption) && powerValue !== undefined;
     const dark = this.hass.themes?.darkMode === true;
     const backgrounds = dark
       ? {
@@ -546,7 +612,8 @@ export class ThermoMatrixCard extends LitElement {
         </div>
         ${this._renderSupplementalRow(
           externalStatus,
-          powerEntity,
+          powerValue,
+          powerUnit,
           showAdvancedStatus,
           showPower,
         )}
@@ -726,7 +793,8 @@ export class ThermoMatrixCard extends LitElement {
 
   private _renderSupplementalRow(
     externalStatus: HassEntity | undefined,
-    power: HassEntity | undefined,
+    powerValue: number | undefined,
+    powerUnit: string,
     showAdvancedStatus: boolean,
     showPower: boolean,
   ): TemplateResult | typeof nothing {
@@ -734,11 +802,17 @@ export class ThermoMatrixCard extends LitElement {
       return nothing;
     }
 
-    const numeric = Number(power?.state);
-    const unit = String(power?.attributes.unit_of_measurement ?? "");
     const advancedStatus = externalStatus
       ? this._translateAdvancedStatus(externalStatus.state)
       : this._t("unavailable").toUpperCase();
+    const rawStateQuality = String(externalStatus?.attributes.state_quality ?? "");
+    const stateQuality = rawStateQuality === "confirmed" || rawStateQuality === "estimated"
+      ? rawStateQuality
+      : "";
+    const qualityLabel = QUALITY_LABELS[this._language()][stateQuality];
+    const statusTitle = qualityLabel
+      ? `${advancedStatus} · ${qualityLabel}`
+      : advancedStatus;
 
     return html`
       <div class="lcd-supplemental ${showAdvancedStatus ? "" : "power-only"}">
@@ -748,7 +822,11 @@ export class ThermoMatrixCard extends LitElement {
                 <span class="lcd-supplemental-label">
                   ${STATUS_LABELS[this._language()]}
                 </span>
-                <span class="lcd-advanced-value" title=${advancedStatus}>
+                <span
+                  class="lcd-advanced-value quality-${stateQuality || "unknown"}"
+                  title=${statusTitle}
+                  aria-label=${statusTitle}
+                >
                   ${this._renderExternalStatus(advancedStatus)}
                 </span>
               </div>
@@ -761,12 +839,8 @@ export class ThermoMatrixCard extends LitElement {
                   ${this._t("consumption")}
                 </span>
                 <span class="lcd-power-value">
-                  ${Number.isFinite(numeric)
-                    ? this._renderLcdNumber(power?.state)
-                    : html`<span class="unavailable">${this._t("unavailable")}</span>`}
-                  ${Number.isFinite(numeric)
-                    ? html`<span class="lcd-consumption-unit">${unit}</span>`
-                    : nothing}
+                  ${this._renderLcdNumber(powerValue)}
+                  <span class="lcd-consumption-unit">${powerUnit}</span>
                 </span>
               </div>
             `
@@ -813,6 +887,89 @@ export class ThermoMatrixCard extends LitElement {
       entity_id: this._config.entity,
       hvac_mode: hvacMode,
     });
+  }
+
+  private _invalidateStatusDiscovery(): void {
+    this._statusDiscoveryGeneration += 1;
+    this._statusDiscovery.invalidate();
+  }
+
+  private async _ensureStatusDiscovery(): Promise<void> {
+    if (
+      !this.hass ||
+      !this._config ||
+      this._config.status_entity ||
+      this._statusDiscoveryPromise ||
+      this._statusDiscovery.get(this._config.entity, this.hass.connection) !== undefined
+    ) {
+      return;
+    }
+
+    const climateEntity = this._config.entity;
+    const connection = this.hass.connection;
+    const generation = this._statusDiscoveryGeneration;
+    const request = this.hass.callWS<EntityRegistryEntry[]>({
+      type: "config/entity_registry/list",
+    });
+
+    this._statusDiscoveryPromise = request
+      .then((registry) => {
+        if (
+          generation !== this._statusDiscoveryGeneration ||
+          climateEntity !== this._config.entity ||
+          connection !== this.hass.connection
+        ) {
+          return;
+        }
+        this._statusDiscovery.set(
+          climateEntity,
+          connection,
+          discoverThermoPilotStatusEntity(climateEntity, registry, this.hass.states),
+        );
+        this.requestUpdate();
+      })
+      .catch(() => {
+        if (generation === this._statusDiscoveryGeneration) {
+          this._statusDiscovery.set(climateEntity, connection, null);
+        }
+      })
+      .finally(() => {
+        this._statusDiscoveryPromise = undefined;
+        void this._ensureStatusDiscovery();
+      });
+
+    await this._statusDiscoveryPromise;
+  }
+
+  private _syncStatusRegistrySubscription(): void {
+    const connection = this.hass?.connection;
+    if (connection === this._statusRegistryConnection) {
+      return;
+    }
+
+    this._unsubscribeStatusRegistry?.();
+    this._unsubscribeStatusRegistry = undefined;
+    this._statusRegistryConnection = connection;
+    this._invalidateStatusDiscovery();
+    const subscriptionGeneration = ++this._statusRegistrySubscriptionGeneration;
+
+    if (!connection?.subscribeEvents) {
+      return;
+    }
+
+    void connection.subscribeEvents(
+      () => {
+        this._invalidateStatusDiscovery();
+        void this._ensureStatusDiscovery();
+      },
+      "entity_registry_updated",
+    ).then((unsubscribe) => {
+      if (subscriptionGeneration === this._statusRegistrySubscriptionGeneration) {
+        this._unsubscribeStatusRegistry = unsubscribe;
+      } else {
+        unsubscribe();
+      }
+    }).catch(() => undefined);
   }
 
   private _hasDisplayTapAction(): boolean {
