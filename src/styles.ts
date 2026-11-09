@@ -114,6 +114,7 @@ export const thermoMatrixStyles = css`
 
   .lcd-panel {
     width: 100%;
+    container-type: inline-size;
     overflow: hidden;
     padding: 14px;
     border: 2px solid color-mix(in srgb, currentColor 34%, transparent);
@@ -131,6 +132,59 @@ export const thermoMatrixStyles = css`
     border-color: color-mix(in srgb, white 52%, transparent);
     box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.28),
       0 0 16px color-mix(in srgb, var(--lcd-background) 52%, transparent);
+  }
+
+  .lcd-panel.classic-green,
+  .lcd-panel.dark.classic-green {
+    color: #1d281b;
+    border-color: rgba(45, 58, 39, 0.42);
+    box-shadow: inset 0 2px 9px rgba(32, 44, 27, 0.28),
+      0 3px 10px rgba(0, 0, 0, 0.12);
+  }
+
+  .display-size-large .lcd-panel {
+    padding: 20px 18px;
+  }
+
+  .display-size-large .lcd-reading.current {
+    font-size: clamp(62px, 17cqi, 82px);
+  }
+
+  .display-size-large .lcd-reading.target {
+    font-size: clamp(42px, 12cqi, 58px);
+  }
+
+  .display-size-large .lcd-reading-label {
+    margin-bottom: 11px;
+    font-size: 12px;
+  }
+
+  .display-size-large .status-stack {
+    gap: 7px;
+  }
+
+  .display-size-large .status-box {
+    min-height: 24px;
+  }
+
+  .display-size-large .lcd-supplemental {
+    margin-top: 18px;
+  }
+
+  .display-size-large .lcd-supplemental-label {
+    font-size: 11px;
+  }
+
+  .display-size-large .lcd-advanced-value {
+    min-height: 29px;
+    padding-top: 8px;
+    font-size: 16px;
+  }
+
+  .display-size-large .lcd-power-value,
+  .display-size-large .lcd-power-value .lcd-number,
+  .display-size-large .lcd-power-value .power-text {
+    font-size: 25px;
   }
 
   .lcd-panel.actionable {

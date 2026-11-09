@@ -59,3 +59,9 @@
    automazioni di controllo e prima release.
 6. **HACS** — installazione come repository personalizzato e successiva
    candidatura al catalogo predefinito.
+
+## Verifiche aperte
+
+- Validare la release 1.5.0 su un'istanza Home Assistant 2026.11, includendo
+  aggiunta tramite Marketplace, aggiornamento, suggerimento automatico della
+  card per un'entità `climate` e resa `large` su tablet o wall display.

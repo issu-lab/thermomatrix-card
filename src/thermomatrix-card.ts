@@ -7,6 +7,7 @@ import {
 } from "lit";
 import { keyed } from "lit/directives/keyed.js";
 import { thermoMatrixStyles } from "./styles";
+import { getThermoMatrixEntitySuggestion } from "./card-suggestion";
 import {
   discoverThermoPilotStatusEntity,
   selectNumericPower,
@@ -20,7 +21,7 @@ import type {
   ThermoMatrixConfig,
 } from "./types";
 
-const VERSION = "1.4.0";
+const VERSION = "1.5.0";
 const WORKING_ACTIONS = new Set(["heating", "cooling", "drying", "fan"]);
 const WHEEL_CHARACTERS = [" ", ..."ABCDEFGHIJKLMNOPQRSTUVWXYZ"];
 
@@ -272,6 +273,30 @@ export class ThermoMatrixCard extends LitElement {
               },
             },
             {
+              name: "display_size",
+              selector: {
+                select: {
+                  mode: "dropdown",
+                  options: [
+                    { value: "standard", label: "Standard" },
+                    { value: "large", label: "Large" },
+                  ],
+                },
+              },
+            },
+            {
+              name: "display_theme",
+              selector: {
+                select: {
+                  mode: "dropdown",
+                  options: [
+                    { value: "state", label: "State color" },
+                    { value: "classic_green", label: "Classic green LCD" },
+                  ],
+                },
+              },
+            },
+            {
               name: "temperature_step",
               selector: {
                 number: { min: 0.1, max: 5, step: 0.1, mode: "box" },
@@ -306,6 +331,8 @@ export class ThermoMatrixCard extends LitElement {
           preset_button_labels: "Preset button labels",
           status_display: "Status display",
           display_font: "Display font",
+          display_size: "Display size",
+          display_theme: "Display theme",
           temperature_step: "Temperature step",
           tap_action: "Display tap action",
         })[schema.name ?? ""] ?? schema.name,
@@ -343,6 +370,8 @@ export class ThermoMatrixCard extends LitElement {
       preset_button_labels: "hide",
       status_display: "indicators",
       display_font: "lcd",
+      display_size: "standard",
+      display_theme: "state",
       temperature_step: 0.1,
       tap_action: { action: "none" },
     };
@@ -371,6 +400,8 @@ export class ThermoMatrixCard extends LitElement {
       preset_button_labels: config.preset_button_labels ?? "hide",
       status_display: config.status_display ?? "indicators",
       display_font: config.display_font ?? "lcd",
+      display_size: config.display_size ?? "standard",
+      display_theme: config.display_theme ?? "state",
       temperature_step: config.temperature_step ?? 0.1,
       tap_action: config.tap_action ?? { action: "none" },
     };
@@ -453,7 +484,8 @@ export class ThermoMatrixCard extends LitElement {
     return html`
       <ha-card
         class=${`${dark ? "dark " : ""}display-font-${this._config
-          .display_font ?? "lcd"}`}
+          .display_font ?? "lcd"} display-size-${this._config
+          .display_size ?? "standard"}`}
         style=${`--tm-border-color:${
           dynamicBorder ? modeColor : "var(--tm-neutral-border)"
         };--tm-card-shadow:${shadow};`}
@@ -557,6 +589,7 @@ export class ThermoMatrixCard extends LitElement {
     const showPower =
       Boolean(this._config.show_consumption) && powerValue !== undefined;
     const dark = this.hass.themes?.darkMode === true;
+    const classicGreen = this._config.display_theme === "classic_green";
     const backgrounds = dark
       ? {
           heat: "#E36304",
@@ -574,13 +607,16 @@ export class ThermoMatrixCard extends LitElement {
           fan_only: "#a5f3fc",
           off: "#d1d5db",
         };
-    const background =
-      backgrounds[mode as keyof typeof backgrounds] ??
-      (dark ? "#334155" : "#cbd5e1");
+    const background = classicGreen
+      ? "#aebd8e"
+      : backgrounds[mode as keyof typeof backgrounds] ??
+        (dark ? "#334155" : "#cbd5e1");
 
     return html`
       <div
-        class="lcd-panel ${dark ? "dark" : ""} ${this._hasDisplayTapAction()
+        class="lcd-panel ${dark ? "dark" : ""} ${classicGreen
+          ? "classic-green"
+          : ""} ${this._hasDisplayTapAction()
           ? "actionable"
           : ""}"
         style=${`--lcd-background:${background}`}
@@ -1102,13 +1138,7 @@ window.customCards.push({
   description: "Termostato LCD modulare per entità climate",
   preview: true,
   getEntitySuggestion: (_hass: HomeAssistant, entityId: string) =>
-    entityId.startsWith("climate.")
-      ? {
-          entity: entityId,
-          show_presets: true,
-          border_mode: "state",
-        }
-      : null,
+    getThermoMatrixEntitySuggestion(entityId),
 });
 
 console.info(

@@ -1,13 +1,15 @@
 {
   "name": "thermomatrix-card",
-  "version": "1.4.0",
+  "version": "1.5.0",
+  "packageManager": "pnpm@11.25.0",
   "description": "A modular LCD-style climate card for Home Assistant",
   "type": "module",
   "scripts": {
     "build": "tsc --noEmit && vite build",
     "dev": "vite build --watch",
     "check": "tsc --noEmit",
-    "test": "node tests/status-discovery.test.mjs"
+    "test": "node tests/status-discovery.test.mjs && node tests/marketplace-compatibility.test.mjs",
+    "validate:marketplace": "node scripts/validate-marketplace.mjs"
   },
   "dependencies": {
     "lit": "^3.3.1"

@@ -30,6 +30,8 @@ export type BorderMode = "state" | "neutral";
 export type ButtonLabelMode = "auto" | "show" | "hide";
 export type StatusDisplayMode = "wheel" | "indicators";
 export type DisplayFont = "lcd" | "condensed" | "mono";
+export type DisplaySize = "standard" | "large";
+export type DisplayTheme = "state" | "classic_green";
 
 export interface TapActionConfig {
   action: "more-info" | "none";
@@ -51,6 +53,8 @@ export interface ThermoMatrixConfig {
   preset_button_labels?: ButtonLabelMode;
   status_display?: StatusDisplayMode;
   display_font?: DisplayFont;
+  display_size?: DisplaySize;
+  display_theme?: DisplayTheme;
   temperature_step?: number;
   tap_action?: TapActionConfig;
 }

@@ -4,7 +4,7 @@
 
 [![Status](https://img.shields.io/badge/status-stable-2EA44F?style=flat-square)](#project-status)
 [![Home Assistant](https://img.shields.io/badge/Home%20Assistant-dashboard-41BDF5?style=flat-square&logo=homeassistant&logoColor=white)](https://www.home-assistant.io/)
-[![HACS](https://img.shields.io/badge/HACS-custom%20repository-C346F4?style=flat-square)](https://www.hacs.xyz/)
+[![Marketplace](https://img.shields.io/badge/Home%20Assistant-Marketplace-C346F4?style=flat-square)](https://contributors.home-assistant.io/marketplace/)
 [![License](https://img.shields.io/badge/license-MIT-C346F4?style=flat-square)](https://github.com/issu-lab/thermomatrix-card/blob/main/LICENSE)
 
 **An LCD-inspired climate card for Home Assistant.**
@@ -24,13 +24,13 @@ ThermoMatrix provides a clear climate control interface with seven-segment tempe
 | **Recommended for production** | ✅ Yes |
 | **Setup difficulty** | 🟢 Beginner |
 | **Documentation** | ✅ Complete |
-| **Current version** | `1.4.0` |
+| **Current version** | `1.5.0` |
 
 > [!NOTE]
-> **Beginner setup:** installation is handled by HACS. After adding the custom repository, select a climate entity in the visual card editor.
+> **Beginner setup:** on Home Assistant 2026.11 or later, installation is handled by Marketplace. After adding the custom repository, select a climate entity in the visual card editor.
 
 > [!NOTE]
-> Version 1.4.0 adds automatic discovery of the unified ThermoPilot status sensor, optional numeric power reuse and compact estimated/confirmed state semantics while preserving manual overrides.
+> Version 1.5.0 prepares ThermoMatrix for Home Assistant 2026.11 Marketplace, updates card suggestions to the current Home Assistant API and adds standard or large LCD sizing plus an optional classic green LCD theme. ThermoPilot status autodiscovery and manual overrides remain supported.
 
 ---
 
@@ -68,19 +68,19 @@ The gallery below shows the current card in real Home Assistant dashboards with 
 
 ---
 
-## Installation with HACS
+## Installation with Home Assistant Marketplace
 
-ThermoMatrix is installed as a HACS custom repository. Manual copying of the JavaScript file is not required.
+ThermoMatrix is installed as a custom dashboard repository in Home Assistant Marketplace. Manual copying of the JavaScript file is not required.
 
 <div align="center">
 
-[![Open your Home Assistant instance and open ThermoMatrix Card inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=issu-lab&repository=thermomatrix-card&category=plugin)
+[![Open your Home Assistant instance and add ThermoMatrix Card to Marketplace.](https://my.home-assistant.io/badges/marketplace_repository.svg)](https://my.home-assistant.io/redirect/marketplace_repository/?owner=issu-lab&repository=thermomatrix-card&category=plugin)
 
 </div>
 
-The button opens ThermoMatrix Card directly as a custom dashboard repository in HACS. Alternatively, add it manually:
+The button opens ThermoMatrix Card directly as a custom dashboard repository in Marketplace. Alternatively, add it manually:
 
-1. Open **HACS** in Home Assistant.
+1. Open **Marketplace** in Home Assistant.
 2. Open the menu in the top-right corner.
 3. Select **Custom repositories**.
 4. Add this repository URL:
@@ -91,14 +91,17 @@ https://github.com/issu-lab/thermomatrix-card
 
 5. Select **Dashboard** as the repository type. Depending on the interface language or HACS version, it may appear as **Plancia** or use the older name **Plugin**.
 6. Select **Add**.
-7. Search for **ThermoMatrix Card** in HACS.
+7. Search for **ThermoMatrix Card** in Marketplace.
 8. Open it and select **Download**.
 9. Refresh the Home Assistant browser page after installation.
 
-HACS manages the dashboard resource automatically.
+Marketplace manages the dashboard resource automatically.
 
 > [!TIP]
-> The general procedure is also described in the [HACS custom repository documentation](https://www.hacs.xyz/docs/faq/custom_repositories/).
+> On Home Assistant versions before 2026.11, add the same URL to HACS as a custom **Dashboard** repository. The package remains compatible with the established HACS format.
+
+> [!TIP]
+> Marketplace repository requirements are documented in the official [Home Assistant dashboard repository guide](https://contributors.home-assistant.io/marketplace/guides/dashboard/).
 
 ---
 
@@ -135,6 +138,8 @@ hvac_button_labels: hide
 preset_button_labels: hide
 status_display: indicators
 display_font: lcd
+display_size: standard
+display_theme: state
 tap_action:
   action: none
 ```
@@ -159,6 +164,8 @@ The visual editor keeps only **Climate entity** and **Custom name** visible init
 | `preset_button_labels` | Controls preset button text visibility. |
 | `status_display` | Selects the mechanical wheel or LCD indicators. |
 | `display_font` | Selects the original LCD, condensed or monospace display style. |
+| `display_size` | Selects the standard layout or a larger LCD for tablets and wall displays. |
+| `display_theme` | Selects state-colored LCD backgrounds or a fixed classic green LCD. |
 | `tap_action` | Enables an optional action when the LCD display is tapped. |
 
 ---
@@ -245,6 +252,27 @@ display_font: lcd
 - `condensed` — compact proportional values.
 - `mono` — technical monospaced values.
 
+### Display size and theme
+
+The default `standard` size preserves the original card proportions. Select
+`large` for a taller LCD with larger current and target temperatures on tablets,
+wall panels and wide dashboard views:
+
+```yaml
+display_size: large
+```
+
+All three display fonts remain available in both sizes. The optional classic
+theme keeps a fixed old-style green LCD while the state-colored card border and
+active power button continue to behave normally:
+
+```yaml
+display_theme: classic_green
+border_mode: state
+```
+
+Available display themes are `state` and `classic_green`.
+
 ### Recommended companion: ThermoPilot
 
 [ThermoPilot](https://github.com/issu-lab/thermopilot) is a native Home Assistant climate controller designed to work especially well with ThermoMatrix. From ThermoPilot 0.3.0, ThermoMatrix can discover its unified status sensor automatically through the shared Home Assistant device and use it for advanced state and optional numeric power. Manual `status_entity` and `power_entity` overrides remain supported.
@@ -315,7 +343,7 @@ npm install
 npm run build
 ```
 
-The Home Assistant and HACS distributable is generated at:
+The Home Assistant Marketplace and HACS distributable is generated at:
 
 ```text
 dist/thermomatrix-card.js
@@ -326,8 +354,8 @@ dist/thermomatrix-card.js
 ## Known Limitations
 
 - Additional customization options may be introduced in future releases.
-- Installation currently requires adding the repository manually to HACS.
-- Compatibility has not yet been documented across multiple Home Assistant versions.
+- ThermoMatrix is not yet in the default Marketplace catalog, so it must be added through the direct button or as a custom repository.
+- Automated checks cover packaging, card suggestions and a reproducible build; live validation still depends on the Home Assistant version in use.
 - The visual result depends on the features exposed by the selected climate entity.
 
 ---
